@@ -2,6 +2,8 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
 const posts = (await getCollection('blog')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
@@ -15,18 +17,18 @@ const formatDate = (date) =>
     <h1>你好，我是 <span class="accent">博主</span> 👋</h1>
     <p>这里记录我的学习笔记、技术心得与随手写下的想法。</p>
     <p>
-      <a class="button" href="/blog/">阅读文章 →</a>
-      <a class="button ghost" href="/about/">关于我</a>
+      <a class="button" href={`${base}/#posts`}>阅读文章 →</a>
+      <a class="button ghost" href={`${base}/about/`}>关于我</a>
     </p>
   </section>
 
-  <section class="post-list">
-    <h2>最新文章</h2>
+  <section class="post-list" id="posts">
+    <h2>全部文章</h2>
     <ul>
       {
         posts.map((post) => (
           <li class="post-list-item">
-            <a href={`/blog/${post.id}/`}>
+            <a href={`${base}/${post.id}/`}>
               <h3>{post.data.title}</h3>
               <p>{post.data.description}</p>
               <time datetime={post.data.pubDate.toISOString()}>
