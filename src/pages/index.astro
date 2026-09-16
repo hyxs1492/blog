@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+const formatDate = (date) =>
+  date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<BaseLayout pageTitle="首页">
+  <section class="hero">
+    <h1>你好，我是 <span class="accent">博主</span> 👋</h1>
+    <p>这里记录我的学习笔记、技术心得与随手写下的想法。</p>
+    <p>
+      <a class="button" href="/blog/">阅读文章 →</a>
+      <a class="button ghost" href="/about/">关于我</a>
+    </p>
+  </section>
+
+  <section class="post-list">
+    <h2>最新文章</h2>
+    <ul>
+      {
+        posts.map((post) => (
+          <li class="post-list-item">
+            <a href={`/blog/${post.id}/`}>
+              <h3>{post.data.title}</h3>
+              <p>{post.data.description}</p>
+              <time datetime={post.data.pubDate.toISOString()}>
+                {formatDate(post.data.pubDate)}
+              </time>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</BaseLayout>
