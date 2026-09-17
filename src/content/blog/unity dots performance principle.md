@@ -4,8 +4,6 @@ description: 'DOTS 是为了让"成千上万个同质对象每帧都要算一遍
 pubDate: '2026-01-15'
 ---
 
-# Unity DOTS —— 性能原理技术文档
-
 > 主题：**为什么用 DOTS**，以及 **DOTS 为什么快**（性能收益的来源拆解）
 > 适用版本：Unity Entities 1.0+ / Burst 1.8+ / Collections 2.x（本文按 Entities 1.0.16 编写）
 > 阅读方式：先看「速览」；想理解原理看 §2；想判断"该不该用"看 §1 与 §4；文末有「速查表」。
@@ -343,17 +341,26 @@ Burst 产出的是**原生机器码**，打包成一个独立的原生库（不�
 
 | 主题 | 链接 |
 |---|---|
-| Entities 包手册（1.0） | https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/index.html |
-| ECS 工作流总览 | https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/ecs-workflows.html |
-| Archetypes 概念（chunk 列式布局） | https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/concepts-archetypes.html |
-| 管理 chunk 分配（16KB、碎片化） | https://docs.unity3d.com/Packages/com.unity.entities@1.3/manual/performance-chunk-allocations.html |
-| 用 `IJobEntity` 迭代组件数据 | https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/iterating-data-ijobentity.html |
-| Burst 手册 | https://docs.unity3d.com/Packages/com.unity.burst@1.8/manual/index.html |
-| Burst：浮点精度与确定性 | https://docs.unity3d.com/6000.6/Documentation/Manual/burst/float-precision-determinism.html |
-| Collections 手册 | https://docs.unity3d.com/Packages/com.unity.collections@2.1/manual/index.html |
-| Mathematics 手册 | https://docs.unity3d.com/Packages/com.unity.mathematics@1.3/manual/index.html |
-| Entities Graphics 手册 | https://docs.unity3d.com/Packages/com.unity.entities.graphics@1.0/manual/index.html |
-| Unity Physics 手册 | https://docs.unity3d.com/Packages/com.unity.physics@1.0/manual/index.html |
-| 官方示例仓库（Entities 101 / HelloCube） | https://github.com/Unity-Technologies/EntityComponentSystemSamples |
+| `Entities` 包手册（1.0） | [entities](https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/index.html) |
+| `ECS` 工作流总览 | [ecs-workflows](https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/ecs-workflows.html) |
+| `ISystem`（非托管、可 Burst） | [systems-isystem](https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/systems-isystem.html) |
+| `SystemBase`（托管） | [systems-systembase](https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/systems-systembase.html) |
+| `IJobEntity`（迭代与并行） | [iterating-data-ijobentity](https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/iterating-data-ijobentity.html) |
+| `IJobChunk` | [iterating-data-ijobchunk](https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/iterating-data-ijobchunk.html) | 
+| `ComponentLookup<T>` / `BufferLookup<T>` | [API: ComponentLookup&lt;T&gt;](https://docs.unity3d.com/Packages/com.unity.entities@1.0/api/Unity.Entities.ComponentLookup-1.html) | 
+| `EntityCommandBuffer`（结构性变更） | [systems-entity-command-buffers](https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/systems-entity-command-buffers.html) · [自动回放与释放](https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/systems-entity-command-buffer-automatic-playback.html) | 
+| `IEnableableComponent`（零结构变更开关） | [components-enableable-use](https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/components-enableable-use.html) |
+| Archetypes 概念（chunk 列式布局） | [archetypes](https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/concepts-archetypes.html) |
+| chunk 分配（16KB、碎片化） | [chunk](https://docs.unity3d.com/Packages/com.unity.entities@1.3/manual/performance-chunk-allocations.html) | 
+| Baking / Baker | [baking-overview](https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/baking-overview.html) · [baking-baker-overview](https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/baking-baker-overview.html) |
+| Blob Asset（不可变共享数据） | [blob-assets-intro](https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/blob-assets-intro.html) |
+| Transform 桥接 | [transforms-intro](https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/transforms-intro.html) | 
+| Entities Graphics 手册 | [entities.graphics@1.0](https://docs.unity3d.com/Packages/com.unity.entities.graphics@1.0/manual/index.html) | 
+| Unity Physics 手册 | [physics@1.0](https://docs.unity3d.com/Packages/com.unity.physics@1.0/manual/index.html) | 
+| Burst 手册 | [burst](https://docs.unity3d.com/Packages/com.unity.burst@1.8/manual/index.html) |
+| Burst：浮点精度与确定性 | [float-precision-determinism](https://docs.unity3d.com/6000.6/Documentation/Manual/burst/float-precision-determinism.html) |
+| Collections 手册 | [collections](https://docs.unity3d.com/Packages/com.unity.collections@2.1/manual/index.html) |
+| Mathematics 手册 | [mathematics](https://docs.unity3d.com/Packages/com.unity.mathematics@1.3/manual/index.html) |
+| 官方示例仓库（Entities 101 / HelloCube） | [EntityComponentSystemSamples](https://github.com/Unity-Technologies/EntityComponentSystemSamples) |
 
 > 中文镜像：把 `docs.unity3d.com` 换成 `docs.unity.cn` 即可。
