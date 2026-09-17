@@ -63,7 +63,7 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('zh-CN', {
   }
 
   .container {
-    max-width: 800px;
+    max-width: 1080px;
     margin: 0 auto;
   }
 
@@ -215,6 +215,39 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('zh-CN', {
     margin: 1.5rem 0;
     font-style: italic;
     color: var(--color-text-dim);
+  }
+
+  /* ---------- 表格 ---------- */
+  .post-content :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.75rem 0;
+    font-size: 0.95rem;
+    display: block;
+    overflow-x: auto;
+  }
+
+  .post-content :global(th),
+  .post-content :global(td) {
+    border: 1px solid var(--color-border);
+    padding: 0.6rem 0.9rem;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .post-content :global(thead th) {
+    background: rgba(139, 92, 246, 0.2);
+    color: var(--color-text);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .post-content :global(tbody tr:nth-child(even)) {
+    background: rgba(148, 163, 184, 0.06);
+  }
+
+  .post-content :global(tbody tr:hover) {
+    background: rgba(59, 130, 246, 0.08);
   }
 
   @keyframes fadeInDown {
