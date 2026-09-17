@@ -8,25 +8,25 @@ const relativePath = currentPath.replace(base.slice(0, -1), '') || '/';
 
 <nav class="nav">
   <div class="nav-container">
-    <a href={base} class="logo">DARKNESS</a>
+    <a href={base} class="logo">HYXS</a>
 
     <div class="nav-links">
       <a href={base} class:list={['nav-link', { active: relativePath === '/' }]}>
-        Home
+        首页
       </a>
       <a href={`${base}blog/`} class:list={['nav-link', { active: relativePath.startsWith('/blog') }]}>
-        Blog
+        文章
       </a>
       <a href={`${base}projects/`} class:list={['nav-link', { active: relativePath.startsWith('/projects') }]}>
-        Projects
+        项目
       </a>
       <a href={`${base}about/`} class:list={['nav-link', { active: relativePath.startsWith('/about') }]}>
-        About
+        关于
       </a>
     </div>
 
     <!-- Mobile menu button -->
-    <button class="mobile-menu-btn" aria-label="Toggle menu" id="mobile-menu-btn">
+    <button class="mobile-menu-btn" aria-label="切换菜单" id="mobile-menu-btn">
       <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="3" y1="12" x2="21" y2="12"></line>
         <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -39,10 +39,10 @@ const relativePath = currentPath.replace(base.slice(0, -1), '') || '/';
 <!-- Mobile menu overlay -->
 <div class="mobile-menu" id="mobile-menu">
   <div class="mobile-menu-content">
-    <a href={base} class:list={['mobile-nav-link', { active: relativePath === '/' }]}>Home</a>
-    <a href={`${base}blog/`} class:list={['mobile-nav-link', { active: relativePath.startsWith('/blog') }]}>Blog</a>
-    <a href={`${base}projects/`} class:list={['mobile-nav-link', { active: relativePath.startsWith('/projects') }]}>Projects</a>
-    <a href={`${base}about/`} class:list={['mobile-nav-link', { active: relativePath.startsWith('/about') }]}>About</a>
+    <a href={base} class:list={['mobile-nav-link', { active: relativePath === '/' }]}>首页</a>
+    <a href={`${base}blog/`} class:list={['mobile-nav-link', { active: relativePath.startsWith('/blog') }]}>文章</a>
+    <a href={`${base}projects/`} class:list={['mobile-nav-link', { active: relativePath.startsWith('/projects') }]}>项目</a>
+    <a href={`${base}about/`} class:list={['mobile-nav-link', { active: relativePath.startsWith('/about') }]}>关于</a>
   </div>
 </div>
 

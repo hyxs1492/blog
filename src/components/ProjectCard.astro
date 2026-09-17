@@ -16,7 +16,7 @@ const imageSrc = image?.startsWith('/') ? `${base}${image.slice(1)}` : image;
 
 <article class="project-card" class:list={{ featured }}>
   <div class="project-card-content">
-    {featured && <span class="featured-badge">Featured</span>}
+    {featured && <span class="featured-badge">精选</span>}
     {image && (
       <div class="project-image">
         <img src={imageSrc} alt={title} loading="lazy" />
@@ -39,7 +39,7 @@ const imageSrc = image?.startsWith('/') ? `${base}${image.slice(1)}` : image;
             <polyline points="15 3 21 3 21 9"></polyline>
             <line x1="10" y1="14" x2="21" y2="3"></line>
           </svg>
-          Live Demo
+          在线演示
         </a>
       )}
       {github && (
