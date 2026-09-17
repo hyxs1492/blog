@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ParticleField from '../components/ParticleField.astro';
 import { getCollection } from 'astro:content';
+import '../styles/hero.css';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
@@ -13,13 +15,18 @@ const formatDate = (date) =>
 ---
 
 <BaseLayout pageTitle="首页">
-  <section class="hero">
-    <h1>你好，我是 <span class="accent">博主</span> 👋</h1>
-    <p>这里记录我的学习笔记、技术心得与随手写下的想法。</p>
-    <p>
-      <a class="button" href={`${base}/#posts`}>阅读文章 →</a>
-      <a class="button ghost" href={`${base}/about/`}>关于我</a>
-    </p>
+  <section class="hero-full">
+    <ParticleField />
+    <div class="hero-inner">
+      <p class="hero-kicker">// HELLO, WORLD</p>
+      <h1>你好，我是 <span class="accent">博主</span></h1>
+      <p class="hero-sub">记录我的学习笔记、技术心得，以及随手写下的想法。</p>
+      <div class="hero-actions">
+        <a class="button" href="#posts">阅读文章 →</a>
+        <a class="button ghost" href={`${base}/about/`}>关于我</a>
+      </div>
+    </div>
+    <a class="scroll-hint" href="#posts" aria-label="向下滚动查看文章">↓</a>
   </section>
 
   <section class="post-list" id="posts">

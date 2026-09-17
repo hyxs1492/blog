@@ -1,6 +1,6 @@
 ---
-title: 'DOTS基本概念'
-description: 'DOTS的基本概念'
+title: 'Unity DOTS —— 性能原理技术文档'
+description: 'DOTS 是为了让"成千上万个同质对象每帧都要算一遍"这件事变得可行'
 pubDate: '2026-01-15'
 ---
 
