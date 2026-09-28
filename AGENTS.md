@@ -13,7 +13,7 @@
 - **仓库**：<https://github.com/hyxs1492/blog>，**本目录 `blog/` 就是仓库根**
 - **技术栈**：Astro 6（static）+ Three.js 粒子背景 + Content Collections（Markdown）+ TypeScript
 - **两个自研功能**（**不是**上游主题自带的，改动时优先看这两处）：
-  1. **分类**：每篇文章必填 `category`，聚合出 `/blog/blog/category/` 与 `/blog/blog/category/<slug>/`
+  1. **分类**：每篇文章必填 `category`，在**文章页内按分类分组展示**（没有独立的分类页，也没有「分类」导航项）
   2. **可切换的 3D 背景**：右下角切换器，5 套预设，选择存 `localStorage`（详见 §7.4）
 
 ⚠️ **父目录 `/Users/hyxs/Project/UnitGameStudy` 不是 git 仓库**。`blog/` 与同级的
@@ -57,8 +57,8 @@ npm run preview  # 本地预览构建结果
 
 | 命令 | 2026-09-29 基线 |
 |---|---|
-| `npm run build` | ✓ **11 pages**，约 **1.8 s**，产出 `dist/` + `sitemap-index.xml` |
-| `npx astro check` | **32 files：0 error / 0 warning / 0 hint** |
+| `npm run build` | ✓ **9 pages**，约 **2 s**，产出 `dist/` + `sitemap-index.xml` |
+| `npx astro check` | **29 files：0 error / 0 warning / 0 hint** |
 | 浏览器内自检（§7.5） | 切换器 **24 passed / 0 failed** |
 
 **没有 `test`、没有 `lint` 脚本**（`astro check` 就是唯一的静态检查）。所以：
@@ -97,12 +97,11 @@ blog/                       ← 仓库根
 │   ├── content.config.ts   # ★ 两个集合的 schema（内容模型的唯一真源）
 │   ├── content/blog/*.md   # 文章（文件名 = slug，**category 必填**）
 │   ├── content/projects/*.md
-│   ├── utils/categories.ts # ★ 分类：slug 化 + 分组（分类页的唯一逻辑来源）
+│   ├── utils/categories.ts # ★ 分类：slug 化 + 分组（文章页「按分类展示」的唯一逻辑来源）
 │   ├── layouts/BaseLayout.astro      # ★ html 壳：字体、cursor、ClientRouter、背景层
 │   ├── layouts/BlogPostLayout.astro  # 文章页外壳 + 正文排版 + 分类徽章
 │   ├── pages/…             # 路由（见下表）
-│   ├── components/…        # Navigation / Hero / Skills / BlogCard / ProjectCard
-│   │                       #   CategoryChips（分类筛选条）/ ThreeBackground（背景 + 切换器）
+│   ├── components/…        # Navigation / Hero / Skills / BlogCard / ProjectCard / ThreeBackground
 │   ├── scripts/background/ # ★ 3D 背景引擎与 5 套预设（见 §7.4）
 │   └── styles/global.css   # ★ CSS 变量（颜色/字体）+ .shimmer-text
 └── README.md / CHANGELOG.md / docs/portal/ / docs/screenshots/   # 上游主题物料，勿当说明书
@@ -111,17 +110,14 @@ blog/                       ← 仓库根
 | 线上 URL | 源文件 |
 |---|---|
 | `/blog/` | `src/pages/index.astro`（Hero + Skills + 最新 3 篇） |
-| `/blog/blog/` | `src/pages/blog/index.astro`（全部文章 + 分类筛选条） |
+| `/blog/blog/` | `src/pages/blog/index.astro`（**全部文章，按分类分段展示**） |
 | `/blog/blog/<slug>/` | `src/pages/blog/[...slug].astro` → `BlogPostLayout` |
-| `/blog/blog/category/` | `src/pages/blog/category/index.astro`（分类总览） |
-| `/blog/blog/category/<slug>/` | `src/pages/blog/category/[category].astro`（单分类文章列表） |
 | `/blog/projects/` | `src/pages/projects.astro`（精选 / 其他） |
 | `/blog/about/` | `src/pages/about.astro` |
 
-⚠️ **文章和分类的 URL 都有两层 `blog`**：`base`（`/blog`）+ 路由目录 `blog/`。
+⚠️ **文章 URL 有两层 `blog`**：`base`（`/blog`）+ 路由目录 `blog/`。
 即 `unity dots archetype.md` 的实际地址是
-`https://hyxs1492.github.io/blog/blog/unity-dots-archetype/`，分类页是
-`.../blog/blog/category/unity-dots/`。
+`https://hyxs1492.github.io/blog/blog/unity-dots-archetype/`。
 用 `curl` 自测时敲错一层会得到 404，别以为是路由坏了（**build 日志里的路径是相对 `base` 的**）。
 `docs/使用与修改指南.md` 里已写明这一点。
 
@@ -133,10 +129,10 @@ blog/                       ← 仓库根
 | `projects` | `src/content/projects/` | `title`, `description` | `image`, `link`, `github`, `tags`, `featured`（默认 `false`） |
 
 - **`category` 是本站自研的分类功能，必填**（`z.string().min(1)`）。**同一个字符串 = 同一个分类**，
-  URL 由 `categorySlug()` 生成（`src/utils/categories.ts`）：`Unity DOTS` → `unity-dots`，
-  中文分类名会保留（URL 里百分号编码）。大小写/空格不同但 slug 相同的会**合并**。
-- **分类没有单独的注册表**：直接写 frontmatter 就多一个分类，`/blog/blog/category/` 与
-  顶部筛选条都会自动出现。想给某个分类加一句简介 → 改 `categories.ts` 里的 `CATEGORY_DESCRIPTIONS`（可选）。
+  分组逻辑在 `groupPostsByCategory()`（`src/utils/categories.ts`）。大小写/空格不同但 slug 相同的
+  （`Unity DOTS` 与 `unity  dots`）会被**合并**成一个分组。
+- **分类没有注册表，也没有独立的分类页**：写个新值就多一个分组，文章页（`/blog/blog/`）自动按分类
+  分段显示（分类名 + 篇数 + 该分类的卡片）。slug 只用作分段区块的 `id`（可 `#unity-dots` 定位）。
 - ⚠️ 目前**只有 1 个分类**（`Unity DOTS`，5 篇文章确实都是 DOTS）。想拆细只需给各篇写不同的 `category`。
 - **新建 `.md` 不用注册**，`glob` loader 自动收录；**缺必填字段 → build 直接失败**（zod）。
 - **文件名就是 slug**，且 Astro 会**规范化**：实测 `unity dots archetype.md`
