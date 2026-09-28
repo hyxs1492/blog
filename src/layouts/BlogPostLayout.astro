@@ -1,17 +1,19 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import Navigation from '../components/Navigation.astro';
+import { categorySlug } from '../utils/categories';
 
 interface Props {
   title: string;
   description: string;
   pubDate: Date;
+  category?: string | undefined;
   updatedDate?: Date | undefined;
   tags?: string[] | undefined;
 }
 
 const base = import.meta.env.BASE_URL;
-const { title, description, pubDate, updatedDate, tags } = Astro.props;
+const { title, description, pubDate, category, updatedDate, tags } = Astro.props;
 
 const formattedPubDate = pubDate.toLocaleDateString('zh-CN', {
   year: 'numeric',
@@ -34,6 +36,14 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('zh-CN', {
       <header class="post-header">
         <a href={`${base}blog/`} class="back-link">← 返回文章</a>
         <h1 class="post-title shimmer-text">{title}</h1>
+        {category && (
+          <a href={`${base}blog/category/${categorySlug(category)}/`} class="post-category">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            </svg>
+            {category}
+          </a>
+        )}
         <div class="post-meta">
           <time class="post-date">{formattedPubDate}</time>
           {formattedUpdatedDate && (
@@ -98,6 +108,28 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('zh-CN', {
     gap: 1.5rem;
     margin-bottom: 1rem;
     font-size: 0.875rem;
+  }
+
+  .post-category {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.3rem 0.75rem;
+    margin-bottom: 1rem;
+    border-radius: 999px;
+    text-decoration: none;
+    color: var(--color-accent-purple);
+    background: rgba(168, 85, 247, 0.12);
+    border: 1px solid rgba(168, 85, 247, 0.35);
+    transition: all 0.2s ease;
+  }
+
+  .post-category:hover {
+    color: var(--color-text);
+    background: rgba(168, 85, 247, 0.28);
+    border-color: var(--color-accent-purple);
   }
 
   .post-date {

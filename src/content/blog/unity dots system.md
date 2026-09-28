@@ -2,6 +2,7 @@
 title: 'Unity DOTS —— SystemBase与ISystem'
 description: 'DOTS SystemBase'
 pubDate: '2026-01-15'
+category: 'Unity DOTS'
 ---
 
 ## 速览

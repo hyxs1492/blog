@@ -8,6 +8,8 @@ const blog = defineCollection({
     title: z.string(),
     description: z.string(),
     pubDate: z.coerce.date(),
+    /** 分类：每篇文章一个，必填（缺了 build 会直接失败）。同名归入同一分类页，见 src/utils/categories.ts */
+    category: z.string().min(1),
     updatedDate: z.coerce.date().optional(),
     heroImage: z.string().optional(),
     tags: z.array(z.string()).optional(),

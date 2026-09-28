@@ -1,0 +1,97 @@
+---
+/**
+ * 分类筛选条：一排可点的分类 chip，纯静态链接（无 JS）。
+ * 用在 /blog/ 、/blog/category/ 、/blog/category/<slug>/ 三处。
+ */
+interface Props {
+  categories: { slug: string; name: string; count: number }[];
+  /** 当前分类的 slug，用于高亮；不传表示「全部」 */
+  activeSlug?: string | undefined;
+  /** 是否显示最前面的「全部」chip */
+  showAll?: boolean;
+  /** 「全部」chip 指向哪里 */
+  allHref?: string;
+}
+
+const base = import.meta.env.BASE_URL;
+const { categories, activeSlug, showAll = true, allHref = `${base}blog/` } = Astro.props;
+---
+
+<nav class="category-chips" aria-label="文章分类">
+  {showAll && (
+    <a href={allHref} class:list={['chip', { active: !activeSlug }]}>全部</a>
+  )}
+  {categories.map((category) => (
+    <a
+      href={`${base}blog/category/${category.slug}/`}
+      class:list={['chip', { active: category.slug === activeSlug }]}
+    >
+      {category.name}
+      <span class="chip-count">{category.count}</span>
+    </a>
+  ))}
+</nav>
+
+<style>
+  .category-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.9rem;
+    font-size: 0.875rem;
+    font-family: var(--font-body);
+    font-weight: 500;
+    color: var(--color-text-dim);
+    text-decoration: none;
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  .chip:hover {
+    color: var(--color-text);
+    border-color: var(--color-accent-purple);
+    background: rgba(168, 85, 247, 0.12);
+  }
+
+  .chip.active {
+    color: var(--color-text);
+    border-color: var(--color-accent-purple);
+    background: rgba(168, 85, 247, 0.22);
+  }
+
+  .chip-count {
+    font-size: 0.75rem;
+    line-height: 1;
+    padding: 0.15rem 0.4rem;
+    border-radius: 999px;
+    color: var(--color-accent-purple);
+    background: rgba(168, 85, 247, 0.16);
+  }
+
+  .chip.active .chip-count {
+    color: var(--color-text);
+    background: rgba(168, 85, 247, 0.4);
+  }
+
+  @media (max-width: 768px) {
+    .category-chips {
+      gap: 0.4rem;
+    }
+
+    .chip {
+      font-size: 0.8125rem;
+      padding: 0.35rem 0.75rem;
+    }
+  }
+</style>

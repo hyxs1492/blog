@@ -2,6 +2,7 @@
 title: 'Unity DOTS —— Archetype、Chunk、Entity'
 description: 'DOTS Archetype、Chunk、Entity 基本概念'
 pubDate: '2026-01-15'
+category: 'Unity DOTS'
 ---
 
 

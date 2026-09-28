@@ -2,6 +2,7 @@
 title: 'Unity DOTS —— IJobEntity、IJobChunk'
 description: 'IJobEntity、IJobChunk 基本概念'
 pubDate: '2026-01-15'
+category: 'Unity DOTS'
 ---
 
 ## 速览

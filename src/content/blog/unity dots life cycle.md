@@ -2,6 +2,7 @@
 title: 'Unity DOTS —— 生命周期技术文档'
 description: 'DOTS与MonoBehaviour的生命周期'
 pubDate: '2026-01-15'
+category: 'Unity DOTS'
 ---
 
 > 主题：**World / SystemGroup / System** 三级结构的生命周期，以及与 **MonoBehaviour** 生命周期的统一时间线

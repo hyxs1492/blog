@@ -1,0 +1,125 @@
+---
+import type { CategoryGroup } from '../../../utils/categories';
+import { getAllCategories } from '../../../utils/categories';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Navigation from '../../../components/Navigation.astro';
+import BlogCard from '../../../components/BlogCard.astro';
+import CategoryChips from '../../../components/CategoryChips.astro';
+
+export async function getStaticPaths() {
+  const categories = await getAllCategories();
+  return categories.map((group) => ({
+    params: { category: group.slug },
+    props: { group },
+  }));
+}
+
+interface Props {
+  group: CategoryGroup;
+}
+
+const base = import.meta.env.BASE_URL;
+const { group } = Astro.props;
+const allCategories = await getAllCategories();
+---
+
+<BaseLayout
+  title={`${group.name} — 分类 — HYXS 的博客`}
+  description={group.description ?? `${group.name} 分类下的全部文章`}
+>
+  <Navigation />
+
+  <main class="category-page">
+    <div class="container">
+      <header class="page-header">
+        <a href={`${base}blog/category/`} class="back-link">← 全部分类</a>
+        <h1 class="page-title shimmer-text">{group.name}</h1>
+        <p class="page-subtitle">共 {group.count} 篇文章</p>
+        {group.description && (
+          <p class="category-description">{group.description}</p>
+        )}
+      </header>
+
+      <CategoryChips categories={allCategories} activeSlug={group.slug} />
+
+      <div class="posts-grid">
+        {group.posts.map((post) => (
+          <BlogCard
+            title={post.data.title}
+            description={post.data.description}
+            pubDate={post.data.pubDate}
+            slug={post.id}
+            category={post.data.category}
+            tags={post.data.tags}
+          />
+        ))}
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .category-page {
+    min-height: 100vh;
+    padding: calc(var(--nav-height) + 2rem) 2rem 5rem;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .back-link {
+    display: inline-block;
+    color: var(--color-accent-purple);
+    text-decoration: none;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .back-link:hover {
+    transform: translateX(-5px);
+    color: var(--color-accent-pink);
+  }
+
+  .page-title {
+    font-size: clamp(2.25rem, 7vw, 3.5rem);
+    font-weight: 900;
+    margin-bottom: 0.75rem;
+    line-height: 1.2;
+  }
+
+  .page-subtitle {
+    font-size: 1.1rem;
+    color: var(--color-text-dim);
+  }
+
+  .category-description {
+    max-width: 60ch;
+    margin: 1rem auto 0;
+    line-height: 1.7;
+    color: var(--color-text-dim);
+  }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .category-page {
+      padding-top: calc(var(--nav-height) + 1rem);
+    }
+
+    .posts-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

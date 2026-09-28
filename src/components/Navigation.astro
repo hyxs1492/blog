@@ -4,6 +4,9 @@ const base = import.meta.env.BASE_URL;
 const currentPath = Astro.url.pathname;
 // BASE_URLを除いたパスで比較
 const relativePath = currentPath.replace(base.slice(0, -1), '') || '/';
+// /blog/category/... 归「分类」，其余 /blog/... 归「文章」
+const isCategoryPage = relativePath.startsWith('/blog/category');
+const isBlogPage = relativePath.startsWith('/blog') && !isCategoryPage;
 ---
 
 <nav class="nav">
@@ -14,8 +17,11 @@ const relativePath = currentPath.replace(base.slice(0, -1), '') || '/';
       <a href={base} class:list={['nav-link', { active: relativePath === '/' }]}>
         首页
       </a>
-      <a href={`${base}blog/`} class:list={['nav-link', { active: relativePath.startsWith('/blog') }]}>
+      <a href={`${base}blog/`} class:list={['nav-link', { active: isBlogPage }]}>
         文章
+      </a>
+      <a href={`${base}blog/category/`} class:list={['nav-link', { active: isCategoryPage }]}>
+        分类
       </a>
       <a href={`${base}projects/`} class:list={['nav-link', { active: relativePath.startsWith('/projects') }]}>
         项目
@@ -40,7 +46,8 @@ const relativePath = currentPath.replace(base.slice(0, -1), '') || '/';
 <div class="mobile-menu" id="mobile-menu">
   <div class="mobile-menu-content">
     <a href={base} class:list={['mobile-nav-link', { active: relativePath === '/' }]}>首页</a>
-    <a href={`${base}blog/`} class:list={['mobile-nav-link', { active: relativePath.startsWith('/blog') }]}>文章</a>
+    <a href={`${base}blog/`} class:list={['mobile-nav-link', { active: isBlogPage }]}>文章</a>
+    <a href={`${base}blog/category/`} class:list={['mobile-nav-link', { active: isCategoryPage }]}>分类</a>
     <a href={`${base}projects/`} class:list={['mobile-nav-link', { active: relativePath.startsWith('/projects') }]}>项目</a>
     <a href={`${base}about/`} class:list={['mobile-nav-link', { active: relativePath.startsWith('/about') }]}>关于</a>
   </div>

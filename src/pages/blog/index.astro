@@ -3,11 +3,14 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Navigation from '../../components/Navigation.astro';
 import BlogCard from '../../components/BlogCard.astro';
+import CategoryChips from '../../components/CategoryChips.astro';
+import { groupPostsByCategory } from '../../utils/categories';
 
 const allBlogPosts = await getCollection('blog');
 const sortedPosts = allBlogPosts.sort((a, b) =>
   b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
+const categories = groupPostsByCategory(allBlogPosts);
 ---
 
 <BaseLayout
@@ -25,6 +28,8 @@ const sortedPosts = allBlogPosts.sort((a, b) =>
         </p>
       </header>
 
+      <CategoryChips categories={categories} />
+
       <div class="blog-grid">
         {sortedPosts.map((post) => (
           <BlogCard
@@ -32,6 +37,7 @@ const sortedPosts = allBlogPosts.sort((a, b) =>
             description={post.data.description}
             pubDate={post.data.pubDate}
             slug={post.id}
+            category={post.data.category}
             tags={post.data.tags}
           />
         ))}
