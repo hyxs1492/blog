@@ -1,221 +1,214 @@
 ---
-// Three.js による3D背景アニメーション
+/**
+ * 3D 背景 + 风格切换器。
+ *
+ * 这里只负责：canvas 容器、切换器按钮的标记与样式。
+ * 渲染逻辑在 src/scripts/background/（引擎 + impl/ 下每个预设）。
+ *
+ * ⚠️ `transition:persist` 是刻意加的：让 canvas 跨页保留，
+ * 于是整站浏览只用一个 WebGL 上下文、切页时背景不重启。改动前先读
+ * src/scripts/background/index.ts 顶部的说明。
+ */
+import { PRESETS } from '../scripts/background/catalog';
 ---
 
-<canvas id="three-canvas"></canvas>
+<div id="bg-layer" transition:persist>
+  <canvas id="three-canvas"></canvas>
 
-<script>
-  import * as THREE from 'three';
+  <div class="bg-switcher">
+    <div class="bg-panel" id="bg-panel">
+      <p class="bg-panel-title">背景风格</p>
+      <div class="bg-options">
+        {PRESETS.map((preset) => (
+          <button
+            type="button"
+            class="bg-option"
+            data-bg-preset={preset.id}
+            aria-pressed="false"
+            title={preset.hint}
+          >
+            <span class="bg-option-label">{preset.label}</span>
+            <span class="bg-option-hint">{preset.hint}</span>
+          </button>
+        ))}
+      </div>
+      <p class="bg-panel-note">选择会保存在本机浏览器里</p>
+    </div>
 
-  // Three.js アニメーションの初期化と管理
-  let scene: THREE.Scene | null = null;
-  let camera: THREE.PerspectiveCamera | null = null;
-  let renderer: THREE.WebGLRenderer | null = null;
-  let particlesMesh: THREE.Points<THREE.BufferGeometry, THREE.PointsMaterial> | null = null;
-  let torus: THREE.Mesh<THREE.TorusGeometry, THREE.MeshBasicMaterial> | null = null;
-  let torus2: THREE.Mesh<THREE.TorusGeometry, THREE.MeshBasicMaterial> | null = null;
-  let animationId: number | null = null;
-  let mouseX = 0;
-  let mouseY = 0;
-  let time = 0;
-
-  // マウスムーブハンドラー
-  const handleMouseMove = (event: MouseEvent) => {
-    mouseX = (event.clientX / window.innerWidth) * 2 - 1;
-    mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
-  };
-
-  // リサイズハンドラー
-  const handleResize = () => {
-    if (!camera || !renderer) return;
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  };
-
-  // Three.jsアニメーションの初期化
-  function initThreeAnimation() {
-    const canvas = document.getElementById('three-canvas') as HTMLCanvasElement;
-    if (!canvas) return;
-
-    // 既存のアニメーションをクリーンアップ
-    cleanupThreeAnimation();
-
-    // シーン、カメラ、レンダラーの設定
-    scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    camera.position.z = 5;
-
-    // パーティクルシステムの作成
-    const particlesGeometry = new THREE.BufferGeometry();
-    const particlesCount = 5000;
-    const posArray = new Float32Array(particlesCount * 3);
-    const colorArray = new Float32Array(particlesCount * 3);
-
-    for (let i = 0; i < particlesCount * 3; i += 3) {
-      // ランダムな位置
-      posArray[i] = (Math.random() - 0.5) * 100;
-      posArray[i + 1] = (Math.random() - 0.5) * 100;
-      posArray[i + 2] = (Math.random() - 0.5) * 100;
-
-      // ランダムな色（紫、ピンク、青の系統）
-      const colorType = Math.random();
-      if (colorType < 0.33) {
-        // 紫
-        colorArray[i] = 0.66;
-        colorArray[i + 1] = 0.33;
-        colorArray[i + 2] = 0.97;
-      } else if (colorType < 0.66) {
-        // ピンク
-        colorArray[i] = 0.93;
-        colorArray[i + 1] = 0.28;
-        colorArray[i + 2] = 0.60;
-      } else {
-        // 青
-        colorArray[i] = 0.23;
-        colorArray[i + 1] = 0.51;
-        colorArray[i + 2] = 0.96;
-      }
-    }
-
-    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-    particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
-
-    // パーティクル用マテリアル
-    const particlesMaterial = new THREE.PointsMaterial({
-      size: 0.15,
-      vertexColors: true,
-      transparent: true,
-      opacity: 0.8,
-      blending: THREE.AdditiveBlending,
-    });
-
-    particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
-    scene.add(particlesMesh);
-
-    // 回転するトーラス（ドーナツ型）の追加
-    const torusGeometry = new THREE.TorusGeometry(10, 3, 16, 100);
-    const torusMaterial = new THREE.MeshBasicMaterial({
-      color: 0xa855f7,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.3,
-    });
-    torus = new THREE.Mesh(torusGeometry, torusMaterial);
-    scene.add(torus);
-
-    // 2つ目のトーラス
-    const torus2Geometry = new THREE.TorusGeometry(15, 2, 16, 100);
-    const torus2Material = new THREE.MeshBasicMaterial({
-      color: 0xec4899,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.2,
-    });
-    torus2 = new THREE.Mesh(torus2Geometry, torus2Material);
-    torus2.rotation.x = Math.PI / 4;
-    scene.add(torus2);
-
-    // イベントリスナーの追加
-    document.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('resize', handleResize);
-
-    // アニメーションループの開始
-    time = 0;
-    animate();
-  }
-
-  // アニメーションループ
-  function animate() {
-    if (!scene || !camera || !renderer || !particlesMesh || !torus || !torus2) return;
-
-    animationId = requestAnimationFrame(animate);
-    time += 0.001;
-
-    // パーティクルの回転とうねり
-    particlesMesh.rotation.y = time * 0.3;
-    particlesMesh.rotation.x = Math.sin(time) * 0.1;
-
-    // トーラスの回転
-    torus.rotation.x += 0.01;
-    torus.rotation.y += 0.005;
-    torus.rotation.z += 0.003;
-
-    torus2.rotation.x += 0.005;
-    torus2.rotation.y += 0.01;
-    torus2.rotation.z += 0.002;
-
-    // マウス追従
-    camera.position.x = mouseX * 2;
-    camera.position.y = mouseY * 2;
-    camera.lookAt(scene.position);
-
-    renderer.render(scene, camera);
-  }
-
-  // クリーンアップ
-  function cleanupThreeAnimation() {
-    // アニメーションループの停止
-    if (animationId !== null) {
-      cancelAnimationFrame(animationId);
-      animationId = null;
-    }
-
-    // イベントリスナーの削除
-    document.removeEventListener('mousemove', handleMouseMove);
-    window.removeEventListener('resize', handleResize);
-
-    // Three.jsオブジェクトのクリーンアップ
-    if (particlesMesh) {
-      particlesMesh.geometry.dispose();
-      particlesMesh.material.dispose();
-      particlesMesh = null;
-    }
-
-    if (torus) {
-      torus.geometry.dispose();
-      torus.material.dispose();
-      torus = null;
-    }
-
-    if (torus2) {
-      torus2.geometry.dispose();
-      torus2.material.dispose();
-      torus2 = null;
-    }
-
-    if (renderer) {
-      renderer.dispose();
-      renderer = null;
-    }
-
-    scene = null;
-    camera = null;
-  }
-
-  // Astro View Transitionsに対応した初期化
-  document.addEventListener('astro:page-load', () => {
-    initThreeAnimation();
-  });
-
-  // ページ離脱時のクリーンアップ
-  document.addEventListener('astro:before-preparation', () => {
-    cleanupThreeAnimation();
-  });
-</script>
+    <button
+      type="button"
+      class="bg-toggle"
+      id="bg-toggle"
+      aria-expanded="false"
+      aria-controls="bg-panel"
+      aria-label="切换背景风格"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+        <polyline points="2 17 12 22 22 17"></polyline>
+        <polyline points="2 12 12 17 22 12"></polyline>
+      </svg>
+    </button>
+  </div>
+</div>
 
 <style>
+  /* 容器本身不参与布局：两个子元素都是 fixed */
+  #bg-layer {
+    position: static;
+  }
+
   #three-canvas {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
+    display: block;
     z-index: -1;
     pointer-events: none;
   }
+
+  .bg-switcher {
+    position: fixed;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    z-index: 900;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.6rem;
+  }
+
+  .bg-panel {
+    width: 15.5rem;
+    max-width: calc(100vw - 2.5rem);
+    padding: 0.7rem;
+    background: rgba(15, 23, 42, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-border);
+    border-radius: 0.9rem;
+    box-shadow: 0 14px 44px rgba(2, 6, 23, 0.6);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+  }
+
+  .bg-panel.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .bg-panel-title {
+    margin: 0 0 0.5rem 0.15rem;
+    font-family: var(--font-heading);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--color-text-dim);
+  }
+
+  .bg-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .bg-option {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    width: 100%;
+    padding: 0.5rem 0.65rem;
+    text-align: left;
+    font-family: var(--font-body);
+    color: var(--color-text-dim);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 0.55rem;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .bg-option:hover {
+    color: var(--color-text);
+    background: rgba(59, 130, 246, 0.12);
+  }
+
+  .bg-option.active {
+    color: var(--color-text);
+    background: rgba(168, 85, 247, 0.18);
+    border-color: rgba(168, 85, 247, 0.45);
+  }
+
+  .bg-option-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .bg-option-hint {
+    font-size: 0.72rem;
+    line-height: 1.35;
+    opacity: 0.72;
+  }
+
+  .bg-panel-note {
+    margin: 0.5rem 0 0 0.15rem;
+    font-size: 0.7rem;
+    color: var(--color-text-dim);
+    opacity: 0.7;
+  }
+
+  .bg-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    color: var(--color-text-dim);
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    box-shadow: 0 8px 26px rgba(2, 6, 23, 0.5);
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .bg-toggle:hover {
+    color: var(--color-text);
+    border-color: var(--color-accent-purple);
+    transform: translateY(-1px);
+  }
+
+  .bg-toggle[aria-expanded='true'] {
+    color: var(--color-accent-purple);
+    border-color: var(--color-accent-purple);
+  }
+
+  @media (max-width: 768px) {
+    .bg-switcher {
+      right: 0.85rem;
+      bottom: 0.85rem;
+    }
+
+    .bg-toggle {
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+  }
 </style>
+
+<script>
+  import { initBackground, teardownBackground } from '../scripts/background';
+
+  // astro:page-load 在首屏与每次 View Transition 导航后都会触发
+  document.addEventListener('astro:page-load', () => initBackground());
+  // bfcache 往返 / 首次进入的兜底（initBackground 是幂等的）
+  window.addEventListener('pageshow', () => initBackground());
+  window.addEventListener('pagehide', () => teardownBackground());
+</script>
