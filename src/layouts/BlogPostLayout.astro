@@ -1,7 +1,6 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import Navigation from '../components/Navigation.astro';
-import { categorySlug } from '../utils/categories';
 
 interface Props {
   title: string;
@@ -36,13 +35,14 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('zh-CN', {
       <header class="post-header">
         <a href={`${base}blog/`} class="back-link">← 返回文章</a>
         <h1 class="post-title shimmer-text">{title}</h1>
+        {/* 分类没有独立页面，这里只标明归属；按分类的完整列表见 /blog/blog/ */}
         {category && (
-          <a href={`${base}blog/category/${categorySlug(category)}/`} class="post-category">
+          <span class="post-category">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
             </svg>
             {category}
-          </a>
+          </span>
         )}
         <div class="post-meta">
           <time class="post-date">{formattedPubDate}</time>
@@ -110,6 +110,7 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('zh-CN', {
     font-size: 0.875rem;
   }
 
+  /* 纯展示的分类徽章（分类没有独立页面，所以不是链接） */
   .post-category {
     display: inline-flex;
     align-items: center;
@@ -119,17 +120,9 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('zh-CN', {
     padding: 0.3rem 0.75rem;
     margin-bottom: 1rem;
     border-radius: 999px;
-    text-decoration: none;
     color: var(--color-accent-purple);
     background: rgba(168, 85, 247, 0.12);
     border: 1px solid rgba(168, 85, 247, 0.35);
-    transition: all 0.2s ease;
-  }
-
-  .post-category:hover {
-    color: var(--color-text);
-    background: rgba(168, 85, 247, 0.28);
-    border-color: var(--color-accent-purple);
   }
 
   .post-date {

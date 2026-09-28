@@ -3,14 +3,12 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Navigation from '../../components/Navigation.astro';
 import BlogCard from '../../components/BlogCard.astro';
-import CategoryChips from '../../components/CategoryChips.astro';
 import { groupPostsByCategory } from '../../utils/categories';
 
 const allBlogPosts = await getCollection('blog');
-const sortedPosts = allBlogPosts.sort((a, b) =>
-  b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
+// 按分类分组，组内按发布日期倒序（分组逻辑见 src/utils/categories.ts）
 const categories = groupPostsByCategory(allBlogPosts);
+const totalPosts = allBlogPosts.length;
 ---
 
 <BaseLayout
@@ -26,20 +24,29 @@ const categories = groupPostsByCategory(allBlogPosts);
         <p class="page-subtitle">
           记录技术学习、开发实践与日常思考
         </p>
+        <p class="page-meta">共 {categories.length} 个分类 · {totalPosts} 篇</p>
       </header>
 
-      <CategoryChips categories={categories} />
+      <div class="category-sections">
+        {categories.map((category) => (
+          <section class="category-section" id={category.slug}>
+            <div class="category-head">
+              <h2 class="category-name">{category.name}</h2>
+              <span class="category-count">{category.count} 篇</span>
+            </div>
 
-      <div class="blog-grid">
-        {sortedPosts.map((post) => (
-          <BlogCard
-            title={post.data.title}
-            description={post.data.description}
-            pubDate={post.data.pubDate}
-            slug={post.id}
-            category={post.data.category}
-            tags={post.data.tags}
-          />
+            <div class="blog-grid">
+              {category.posts.map((post) => (
+                <BlogCard
+                  title={post.data.title}
+                  description={post.data.description}
+                  pubDate={post.data.pubDate}
+                  slug={post.id}
+                  tags={post.data.tags}
+                />
+              ))}
+            </div>
+          </section>
         ))}
       </div>
     </div>
@@ -77,6 +84,46 @@ const categories = groupPostsByCategory(allBlogPosts);
     margin: 0 auto;
   }
 
+  .page-meta {
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+    color: var(--color-text-dim);
+    opacity: 0.8;
+  }
+
+  /* ---- 分类分组 ---- */
+  .category-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 3.5rem;
+  }
+
+  .category-section {
+    scroll-margin-top: calc(var(--nav-height) + 1rem);
+  }
+
+  .category-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .category-name {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-primary);
+  }
+
+  .category-count {
+    font-size: 0.875rem;
+    color: var(--color-text-dim);
+  }
+
   .blog-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -86,6 +133,10 @@ const categories = groupPostsByCategory(allBlogPosts);
   @media (max-width: 768px) {
     .blog-page {
       padding-top: calc(var(--nav-height) + 1rem);
+    }
+
+    .category-sections {
+      gap: 2.5rem;
     }
 
     .blog-grid {
