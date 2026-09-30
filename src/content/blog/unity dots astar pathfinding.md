@@ -2,7 +2,7 @@
 title: 'Unity DOTS —— 网格寻路：A* 与 Dijkstra 共用一套内核'
 description: 'XZ 均匀方格上的 A*/Dijkstra 内核：二叉堆 + 生成标记、ECS 请求式并行求解、掩码提取闭合多边形'
 pubDate: '2026-09-29'
-category: 'Unity DOTS'
+category: '算法'
 tags: ['Unity', 'DOTS', 'A*', 'Dijkstra', '寻路']
 ---
 

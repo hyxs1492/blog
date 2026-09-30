@@ -2,7 +2,7 @@
 title: 'Unity DOTS —— 空间索引：四叉树与八叉树合成一棵 NativeSpatialTree'
 description: '一份类型、一套节点布局、一批 job：NativeSpatialTree 如何用 Kind 把四叉树与八叉树做成两种模式，以及它的插入/分裂/查询与 ECS 集成'
 pubDate: '2026-09-29'
-category: 'Unity DOTS'
+category: '算法'
 tags: ['Unity', 'DOTS', '空间索引', '四叉树', '八叉树']
 ---
 

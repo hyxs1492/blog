@@ -2,7 +2,7 @@
 title: 'Unity DOTS —— RVO/ORCA 避障：从速度障碍到半平面线性规划'
 description: 'RVO/ORCA 的算法原理（速度障碍、半平面、三层线性规划）、静态障碍物的拓扑语义，以及 DOTS 三阶段 job 集成与实测踩坑'
 pubDate: '2026-09-29'
-category: 'Unity DOTS'
+category: '算法'
 tags: ['Unity', 'DOTS', 'RVO', 'ORCA', '避障']
 ---
 
@@ -20,26 +20,11 @@ tags: ['Unity', 'DOTS', 'RVO', 'ORCA', '避障']
 ---
 ## 1. 速度障碍 → ORCA 半平面
 **速度障碍（VO）**：把 B 膨胀成半径 `rA + rB` 的圆；相对速度 `v_rel = v_A − v_B` 落在以 A 为顶点、过该圆两条外公切线的圆锥里，则 τ 秒内必撞。
-```
-   相对速度空间：原点 = A，B 膨胀成半径 rA + rB 的圆
-                    ╱╲
-      VO_{A|B}     ╱  ╲  ← 两条外公切线（"腿"）
-                 ╱  ● ╲   ● = B（膨胀后），位于 pB − pA
-                ╱──────╲  ← τ 处截断：截断圆（cut-off circle）
-   v_rel 落在圆锥里 ⇒ τ 秒内必撞
-```
+![速度障碍（VO）示意：原点为 A，B 被膨胀成半径 rA+rB 的圆，两条外侧公切线（腿）与 τ 处的截断圆围出的区域就是「τ 秒内必撞」的相对速度集合](./assets/orca-vo-cone.svg)
 **互惠（reciprocal）**：`VO` 要求 A 单方面躲开（B 不动），`RVO` 改成「双方各改一半」。ORCA 再把它**压成一条半平面** —— 锥体不是凸约束，半平面才是：
 - `u` = **最小分离速度**（把 `v_A` 推到「刚好不撞」的最小改动），`line.Point = v_A + 0.5f * u`：边界过这里，A 只挪一半，另一半由 B 自己承担；
 - `line.Direction` 是边界**切向**（单位向量），实测恒有 `u ⟂ line.Direction`；可行侧恒为 `det(line.Direction, X − line.Point) >= 0`（RVO2 原始约定，见 `OrcaLine` 注释）。
-```
-        不可行侧（v 在这里 ⇒ τ 内会撞）      可行侧
-   ────────────────────────┬──────────────────────
-                           │ ← 边界：过 line.Point = v + u/2
-           v               │        v + u
-           ●───────────────┼───────────●
-           │←──── u/2 ────→│←── u/2 ──→│
-   n 指向可行侧：n·(X − (v + u/2)) ≥ 0
-```
+![ORCA 半平面：`u` 是从 v_A 到 VO 边界最近点的向量，半平面边界过 v_A + u/2 且与 u 垂直，允许侧是含 v_A 的那一侧](./assets/orca-halfplane.svg)
 **逐对构造（`BuildLine`）三分支**，其中 `w = relativeVelocity − relativePosition / τ`：
 | 条件 | 分支 | 结果 |
 | --- | --- | --- |

@@ -133,7 +133,8 @@ blog/                       ← 仓库根
   （`Unity DOTS` 与 `unity  dots`）会被**合并**成一个分组。
 - **分类没有注册表，也没有独立的分类页**：写个新值就多一个分组，文章页（`/blog/blog/`）自动按分类
   分段显示（分类名 + 篇数 + 该分类的卡片）。slug 只用作分段区块的 `id`（可 `#unity-dots` 定位）。
-- ⚠️ 目前**只有 1 个分类**（`Unity DOTS`，5 篇文章确实都是 DOTS）。想拆细只需给各篇写不同的 `category`。
+- ⚠️ 目前有 **2 个分类**：`Unity DOTS`（概念/机制类 5 篇）与 `算法`（模块实现类 5 篇：RenderBridge / Spatial / Visibility /
+  A* 寻路 / RVO-ORCA）。想再拆细只需给各篇写不同的 `category`。
 - **新建 `.md` 不用注册**，`glob` loader 自动收录；**缺必填字段 → build 直接失败**（zod）。
 - **文件名就是 slug**，且 Astro 会**规范化**：实测 `unity dots archetype.md`
   → `/blog/blog/unity-dots-archetype/`（空格→连字符、并转小写）。
@@ -143,6 +144,12 @@ blog/                       ← 仓库根
 - ⚠️ **两个项目条目仍是主题占位内容**：`darkness-theme.md` 的 `github` 还指向
   `yourusername`，`particle-playground.md` 是虚构项目。
 - ⚠️ `heroImage` 在 schema 里声明了，但**全站没有任何地方渲染它**（写了也不显示）。
+- **正文插图（自研约定）**：图放 `src/content/blog/assets/`，Markdown 里用**相对路径**引用
+  （`![说明](./assets/xxx.svg)`）。相对路径会走 Astro 资源管线，**自动带上 `base`** 并产出
+  `/blog/_astro/xxx.<hash>.svg`；**不要**写成 `/blog/images/xxx.svg` 这种硬编码 base 的绝对路径。
+  站点暂无位图/截图资源，算法图一律是**手写 SVG**（矢量、随主题缩放、无外部依赖）；
+  `src/styles/global.css` 里的 `.post-content img` 负责等比缩到容器宽、居中、加细边框。
+  改完图后除了 build，建议用 §7.5 的 headless shell 直接打开 SVG 文件看一眼几何是否画对。
 
 ## 7. 不能破的前提 / 踩过的坑
 

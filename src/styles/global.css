@@ -28,6 +28,16 @@
   padding: 0;
 }
 
+/* Markdown 正文里的插图：等比缩到容器宽度、居中，并加一圈细边框当卡片 */
+.post-content img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1.75rem auto;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+
 html {
   font-family: var(--font-body);
   background: var(--color-bg-dark);

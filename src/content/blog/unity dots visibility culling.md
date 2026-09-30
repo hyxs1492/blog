@@ -2,7 +2,7 @@
 title: 'Unity DOTS —— 视锥剔除：让逻辑侧也知道"看不见"'
 description: '拆解 DOTSUtils.Visibility：从相机取六个世界空间平面、逐点判定、写 IEnableableComponent 开关位，以及一个尚未定位的开放缺陷'
 pubDate: '2026-09-29'
-category: 'Unity DOTS'
+category: '算法'
 tags: ['Unity', 'DOTS', '视锥剔除', 'IEnableableComponent']
 ---
 

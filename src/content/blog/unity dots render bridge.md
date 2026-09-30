@@ -2,7 +2,7 @@
 title: 'Unity DOTS —— 渲染桥：把 GameObject 的渲染换成 ECS 批量绘制'
 description: 'GameObject 全保留、只把渲染目标转成 ECS 实体的运行时渲染桥：转换流程、双向变换同步、视口剔除与销毁策略'
 pubDate: '2026-09-29'
-category: 'Unity DOTS'
+category: '算法'
 tags: ['Unity', 'DOTS', 'Entities Graphics', '渲染桥']
 ---
 
