@@ -1,0 +1,159 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 730" width="1180" height="730"
+     font-family="'DM Sans', -apple-system, system-ui, sans-serif">
+  <rect width="1180" height="730" fill="#0F172A"/>
+
+  <defs>
+    <!-- 「被截断圆切掉」的那块：速度太慢，τ 秒内追不上（不属于 VO） -->
+    <pattern id="cutHatch2" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="7" height="7" fill="#16213A"/>
+      <line x1="0" y1="0" x2="0" y2="7" stroke="#48597A" stroke-width="1.8"/>
+    </pattern>
+  </defs>
+
+  <!-- ===== 标题 ===== -->
+  <text x="24" y="34" fill="#F1F5F9" font-size="17" font-weight="600">同一个场景，两种画法：位置空间 ↔ 速度空间</text>
+  <text x="24" y="58" fill="#94A3B8" font-size="13">A、B 半径各 0.5（R = rA + rB = 1）、τ = 2 秒；左图的每条轨迹对应右图同编号的那个速度点。</text>
+  <text x="24" y="78" fill="#94A3B8" font-size="13">两图都带坐标系：左图 1 个位置单位 = 90 px、右图 1 个速度单位 = 180 px，于是 |Δv| = |Δx| / τ 让两张图里的圆在屏幕上一样大。</text>
+
+  <!-- ===================== 左：位置空间 ===================== -->
+  <rect x="24" y="96" width="556" height="500" rx="8" fill="#0B1220" stroke="#1E293B"/>
+  <text x="40" y="122" fill="#F1F5F9" font-size="15" font-weight="600">位置空间：B 相对 A 实际怎么动</text>
+  <text x="40" y="142" fill="#94A3B8" font-size="12">横纵轴 = 位置（A 是原点）；"真实发生的事"就发生在这个空间里</text>
+  <text x="40" y="166" fill="#94A3B8" font-size="11.5">轨迹 = 从 B 圆心出发、方向 −v、长度 τ|v|；端点 = τ 秒后 B 圆心的位置</text>
+  <text x="40" y="186" fill="#94A3B8" font-size="11.5">①③④ 方向相同、只是速度不同 ⇒ 画在同一条线上、端点不同（⑤ 落在两条橙线外 = 方向不对）</text>
+  <text x="40" y="206" fill="#94A3B8" font-size="11.5">判据：端点进红圈 ⇒ 会撞（③ 正好落在圈上 = 擦边；④ 没到圈 = 不撞）</text>
+
+  <!-- 坐标系（画在轨迹之前，让轨迹/端点盖在上面） -->
+  <line x1="120" y1="490" x2="474" y2="490" stroke="#475569" stroke-width="1.2"/>
+  <polygon points="480,490 468,485.5 468,494.5" fill="#475569"/>
+  <text x="486" y="494" fill="#64748B" font-size="11.5">x</text>
+  <line x1="300" y1="520" x2="300" y2="280" stroke="#475569" stroke-width="1.2"/>
+  <polygon points="300,274 295.5,286 304.5,286" fill="#475569"/>
+  <text x="306" y="276" fill="#64748B" font-size="11.5">y</text>
+  <text x="210" y="508" fill="#64748B" font-size="10.5" text-anchor="middle">−1</text>
+  <text x="390" y="508" fill="#64748B" font-size="10.5" text-anchor="middle">+1</text>
+  <text x="292" y="404" fill="#64748B" font-size="10.5" text-anchor="end">1</text>
+  <text x="292" y="314" fill="#64748B" font-size="10.5" text-anchor="end">2</text>
+
+  <!-- 接触圈 = 以 A 为圆心、半径 R 的圆；B 圆心一旦进入就会撞 -->
+  <circle cx="300" cy="490" r="90" fill="none" stroke="#EF4444" stroke-width="1.6" stroke-dasharray="6 5"/>
+  <text x="344" y="578" fill="#EF4444" font-size="11.5">接触圈：半径 R = 1</text>
+
+  <!-- A 与 B 的真实圆（半径各 0.5），说明 R = rA + rB -->
+  <circle cx="300" cy="490" r="45" fill="#22D3EE" fill-opacity="0.10" stroke="#22D3EE" stroke-width="1.4"/>
+  <circle cx="300" cy="310" r="45" fill="#F1F5F9" fill-opacity="0.10" stroke="#F1F5F9" stroke-width="1.4"/>
+  <circle cx="300" cy="490" r="4" fill="#22D3EE"/>
+  <circle cx="300" cy="310" r="4" fill="#F1F5F9"/>
+  <text x="314" y="496" fill="#22D3EE" font-size="13" font-weight="600">A</text>
+  <text x="314" y="306" fill="#F1F5F9" font-size="13">B（t = 0）</text>
+
+  <!-- 初始相对位置 p -->
+  <line x1="300" y1="490" x2="300" y2="310" stroke="#475569" stroke-width="1.2" stroke-dasharray="4 4"/>
+  <text x="306" y="472" fill="#64748B" font-size="11.5">p</text>
+
+  <!-- 危险方向的边界：从 B 到接触圈的两条切线（对应右图的两条腿） -->
+  <line x1="300" y1="310" x2="137.3" y2="592" stroke="#F59E0B" stroke-width="1.6" stroke-dasharray="5 4"/>
+  <line x1="300" y1="310" x2="462.7" y2="592" stroke="#F59E0B" stroke-width="1.6" stroke-dasharray="5 4"/>
+  <text x="40" y="532" fill="#F59E0B" font-size="11.5">危险方向的边界</text>
+
+  <!-- 五条轨迹（编号与右图一致） -->
+  <line x1="300" y1="310" x2="300" y2="445" stroke="#EF4444" stroke-width="2.4"/>
+  <circle cx="300" cy="445" r="4.5" fill="#EF4444"/>
+  <text x="310" y="441" fill="#EF4444" font-size="12.5" font-weight="600">①</text>
+
+  <line x1="300" y1="310" x2="250.7" y2="445.4" stroke="#F472B6" stroke-width="2.4"/>
+  <circle cx="250.7" cy="445.4" r="4.5" fill="#F472B6"/>
+  <text x="234" y="464" fill="#F472B6" font-size="12.5" font-weight="600">②</text>
+
+  <line x1="300" y1="310" x2="300" y2="400" stroke="#F59E0B" stroke-width="2.4"/>
+  <circle cx="300" cy="400" r="4.5" fill="#F59E0B"/>
+  <text x="310" y="396" fill="#F59E0B" font-size="12.5" font-weight="600">③</text>
+
+  <line x1="300" y1="310" x2="300" y2="355" stroke="#94A3B8" stroke-width="2.4"/>
+  <circle cx="300" cy="355" r="4.5" fill="#94A3B8"/>
+  <text x="310" y="351" fill="#94A3B8" font-size="12.5" font-weight="600">④</text>
+
+  <line x1="300" y1="310" x2="144" y2="400" stroke="#22D3EE" stroke-width="2.4"/>
+  <circle cx="144" cy="400" r="4.5" fill="#22D3EE"/>
+  <text x="126" y="414" fill="#22D3EE" font-size="12.5" font-weight="600">⑤</text>
+
+  <!-- ===================== 右：速度空间 ===================== -->
+  <rect x="600" y="96" width="556" height="500" rx="8" fill="#0B1220" stroke="#1E293B"/>
+  <text x="616" y="122" fill="#F1F5F9" font-size="15" font-weight="600">速度空间：每个点 = 一种相对速度 v</text>
+  <text x="616" y="142" fill="#94A3B8" font-size="12">横纵轴 = 速度（原点 = 相对不动）；每个点背后都是左图的某一条轨迹</text>
+  <text x="616" y="166" fill="#94A3B8" font-size="11.5">虚线圆 = 截断圆（圆心 p/τ、半径 R/τ）—— 就是左边接触圈换到速度空间的样子</text>
+  <text x="616" y="186" fill="#94A3B8" font-size="11.5">橙线 = 锥的两条腿（= 左边 B 到接触圈的两条切线）；红 = 会撞，斜纹 = τ 内赶不到</text>
+
+  <!-- VO：近弧之外、两条腿之间 -->
+  <path d="M802.06 385 A90 90 0 0 0 957.94 385 L1124.8 96 L635.2 96 Z" fill="#EF4444" fill-opacity="0.20"/>
+  <!-- 被切掉的那块：原点与近弧之间 -->
+  <path d="M880 520 L802.06 385 A90 90 0 0 0 957.94 385 Z" fill="url(#cutHatch2)"/>
+
+  <!-- 坐标系（画在填充之后、点之前） -->
+  <line x1="664" y1="520" x2="1116" y2="520" stroke="#475569" stroke-width="1.3"/>
+  <polygon points="1122,520 1110,515.5 1110,524.5" fill="#475569"/>
+  <text x="1112" y="512" fill="#64748B" font-size="11.5" text-anchor="end">v.x</text>
+  <line x1="880" y1="556" x2="880" y2="116" stroke="#475569" stroke-width="1.3"/>
+  <polygon points="880,110 875.5,122 884.5,122" fill="#475569"/>
+  <text x="886" y="114" fill="#64748B" font-size="11.5">v.y</text>
+  <text x="790" y="512" fill="#64748B" font-size="10.5" text-anchor="middle">−0.5</text>
+  <text x="970" y="512" fill="#64748B" font-size="10.5" text-anchor="middle">0.5</text>
+  <text x="1060" y="512" fill="#64748B" font-size="10.5" text-anchor="middle">1</text>
+  <text x="892" y="434" fill="#64748B" font-size="10.5">0.5</text>
+  <text x="892" y="344" fill="#64748B" font-size="10.5">1</text>
+  <text x="892" y="254" fill="#64748B" font-size="10.5">1.5</text>
+
+  <!-- 斜纹区的标签（画在坐标轴之后，免得轴压过它） -->
+  <rect x="850" y="446" width="60" height="17" rx="3" fill="#0F172A"/>
+  <text x="880" y="458.5" fill="#CBD5E1" font-size="10.5" text-anchor="middle">不属于 VO</text>
+
+  <!-- 截断圆 + 腿 + 近弧 -->
+  <circle cx="880" cy="340" r="90" fill="none" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="6 5"/>
+  <line x1="880" y1="520" x2="635.2" y2="96" stroke="#F59E0B" stroke-width="1.8"/>
+  <line x1="880" y1="520" x2="1124.8" y2="96" stroke="#F59E0B" stroke-width="1.8"/>
+  <path d="M802.06 385 A90 90 0 0 0 957.94 385" fill="none" stroke="#EF4444" stroke-width="3"/>
+
+  <!-- 截断圆圆心与半径 -->
+  <circle cx="880" cy="340" r="4" fill="#94A3B8"/>
+  <text x="868" y="332" fill="#94A3B8" font-size="12" text-anchor="end"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">c = p/τ</text>
+  <line x1="880" y1="340" x2="943.6" y2="303.4" stroke="#94A3B8" stroke-width="1" stroke-dasharray="3 3"/>
+  <text x="950" y="300" fill="#94A3B8" font-size="12"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">R/τ</text>
+
+  <!-- 五个速度点（编号与左图一致） -->
+  <circle cx="880" cy="385" r="5.5" fill="#EF4444"/>
+  <text x="864" y="379" fill="#EF4444" font-size="12.5" font-weight="600">①</text>
+  <circle cx="929.3" cy="384.6" r="5.5" fill="#F472B6"/>
+  <text x="939" y="379" fill="#F472B6" font-size="12.5" font-weight="600">②</text>
+  <circle cx="880" cy="430" r="5.5" fill="#F59E0B"/>
+  <text x="862" y="446" fill="#F59E0B" font-size="12.5" font-weight="600">③</text>
+  <circle cx="880" cy="475" r="5.5" fill="#94A3B8"/>
+  <text x="892" y="482" fill="#94A3B8" font-size="12.5" font-weight="600">④</text>
+  <circle cx="1035.9" cy="430" r="5.5" fill="#22D3EE"/>
+  <text x="1046" y="436" fill="#22D3EE" font-size="12.5" font-weight="600">⑤</text>
+
+  <!-- 原点（= 相对不动） -->
+  <circle cx="880" cy="520" r="4.5" fill="#F1F5F9"/>
+  <text x="892" y="540" fill="#F1F5F9" font-size="12">v = 0（相对不动）</text>
+
+  <!-- ===================== 图例 ===================== -->
+  <text x="24" y="628" fill="#F1F5F9" font-size="13" font-weight="600">同编号 = 左图的一条轨迹 = 右图的一个速度点</text>
+
+  <circle cx="40" cy="656" r="5.5" fill="#EF4444"/>
+  <text x="52" y="660" fill="#E2E8F0" font-size="12.5">① 会撞：方向对 + τ 秒内进圈</text>
+
+  <circle cx="268" cy="656" r="5.5" fill="#F472B6"/>
+  <text x="280" y="660" fill="#E2E8F0" font-size="12.5">② 会撞：斜着也行，只要进圈</text>
+
+  <circle cx="496" cy="656" r="5.5" fill="#F59E0B"/>
+  <text x="508" y="660" fill="#E2E8F0" font-size="12.5">③ 擦边：τ 秒末正好落在圈上</text>
+
+  <circle cx="724" cy="656" r="5.5" fill="#94A3B8"/>
+  <text x="736" y="660" fill="#E2E8F0" font-size="12.5">④ 不撞：方向对但 τ 内追不上</text>
+
+  <circle cx="952" cy="656" r="5.5" fill="#22D3EE"/>
+  <text x="964" y="660" fill="#E2E8F0" font-size="12.5">⑤ 不撞：方向不对，永远擦肩</text>
+
+  <text x="24" y="692" fill="#94A3B8" font-size="12.5">判据只有一条：轨迹（长度 τ|v|）在 τ 秒内有没有进入接触圈。位置空间里的"进圈" ⟺ 速度空间里的"落进红色 VO"。</text>
+</svg>

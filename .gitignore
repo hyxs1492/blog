@@ -3,6 +3,9 @@ dist/
 .output/
 .astro/
 
+# local dev server state / logs (blogctl)
+.blogctl/
+
 # dependencies
 node_modules/
 

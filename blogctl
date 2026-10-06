@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# blogctl —— 博客本地预览一键启动/关闭（macOS / Linux 入口）
+#
+# 用法（在博客仓库根目录）：
+#   chmod +x blogctl      # 只需一次（或直接 `bash blogctl start`）
+#   ./blogctl start       # 启动，首次会自动 npm ci
+#   ./blogctl stop        # 关闭
+#   ./blogctl status      # 状态
+#   ./blogctl logs -f     # 实时日志
+#
+# 等价于： node blogctl.mjs <命令>
+set -euo pipefail
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+if ! command -v node >/dev/null 2>&1; then
+  echo "[x] 未找到 node。请先安装 Node.js 22+（https://nodejs.org/ 或 brew install node）" >&2
+  exit 1
+fi
+
+exec node "$DIR/blogctl.mjs" "$@"
