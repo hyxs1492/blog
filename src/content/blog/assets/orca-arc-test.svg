@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 800" width="960" height="800"
+     font-family="'DM Sans', -apple-system, system-ui, sans-serif">
+  <!--
+    相对速度空间：p = (0,2)、R = 1、τ = 2
+      ⇒ 截断圆圆心 c = p/τ = (0,1)、半径 r = R/τ = 0.5、锥半角 α = asin(R/|p|) = 30°
+      ⇒ 切点 T± = c + r·(±sin(90°+α), cos(90°+α)) = (±0.4330127, 0.75)
+      ⇒ 「切点半径」(c→T±) 与轴的正向夹角 = 90°+α = 120°（直角三角形 原点-圆心-切点）
+    判定 (w·p)² > R²|w|² 的含义：从 c 朝 v 的射线打在圆周上的脚点，是否越过切点半径
+      ⇒ 越过（∠(w,p)>90°+α 且 w·p<0）⇒ 脚点落在近弧（= VO 边界）⇒ 圆弧分支
+      ⇒ 否则脚点落在远弧（VO 内部、不是边界）⇒ 最近点在腿上 ⇒ 腿分支
+    三个算例（像素映射：1 单位 = 200 px，原点/锥顶 = (360,590)）：
+      v₁ = (0,0.4)   w·p = -1.2  (w·p)²=1.44 > R²|w|²=0.36  ∠=180°  脚点=(0,0.5)   近弧  ⇒ 圆弧
+      v₂ = (2,0.6)   w·p = -0.8  (w·p)²=0.64 < R²|w|²=4.16  ∠=101.3°脚点=(0.490,0.902) 远弧 ⇒ 腿
+      v₃ = (0,1.6)   w·p = +1.2  （第一项就不满足）           ∠=0°   脚点=(0,1.5)   远弧  ⇒ 腿
+  -->
+  <rect width="960" height="800" fill="#0F172A"/>
+
+  <!-- 坐标轴 -->
+  <g stroke="#334155" stroke-width="1.2">
+    <line x1="40" y1="590" x2="920" y2="590"/>
+    <line x1="360" y1="640" x2="360" y2="120"/>
+  </g>
+  <text x="368" y="136" fill="#64748B" font-size="12">轴 = p 方向（指向 B）</text>
+
+  <!-- 圆锥：两条腿（只我负责时的边界） -->
+  <line x1="360" y1="590" x2="619.8" y2="140" stroke="#F59E0B" stroke-width="2.2"/>
+  <line x1="360" y1="590" x2="100.2" y2="140" stroke="#F59E0B" stroke-width="2.2"/>
+
+  <!-- 近弧扇区：从圆心看过去，脚点会落在近弧上的方向范围 -->
+  <path d="M360 390 L446.6 440 A100 100 0 0 1 273.4 440 Z" fill="#EF4444" fill-opacity="0.16"/>
+
+  <!-- 截断圆：近弧 = VO 边界（红粗）；远弧 = VO 内部（灰细） -->
+  <path d="M446.6 440 A100 100 0 0 0 273.4 440" fill="none" stroke="#64748B" stroke-width="1.6"/>
+  <path d="M446.6 440 A100 100 0 0 1 273.4 440" fill="none" stroke="#EF4444" stroke-width="3.2"/>
+
+  <!-- 切点半径（= 90° + α 的边界） -->
+  <line x1="360" y1="390" x2="446.6" y2="440" stroke="#F1F5F9" stroke-width="1.1" stroke-dasharray="5 4" stroke-opacity="0.75"/>
+  <line x1="360" y1="390" x2="273.4" y2="440" stroke="#F1F5F9" stroke-width="1.1" stroke-dasharray="5 4" stroke-opacity="0.75"/>
+  <circle cx="446.6" cy="440" r="3.5" fill="#F59E0B"/>
+  <circle cx="273.4" cy="440" r="3.5" fill="#F59E0B"/>
+  <text x="452" y="434" fill="#F59E0B" font-size="11.5">切点 T</text>
+
+  <!-- 角度标注：锥顶处的 α、圆心处的 90°+α -->
+  <path d="M360 520 A70 70 0 0 1 395 529.4" fill="none" stroke="#94A3B8" stroke-width="1.1"/>
+  <text x="372" y="548" fill="#94A3B8" font-size="12">α = 30°</text>
+  <path d="M360 335 A55 55 0 0 1 407.6 417.5" fill="none" stroke="#F1F5F9" stroke-width="1.3"/>
+  <text x="374" y="326" fill="#F1F5F9" font-size="12" paint-order="stroke" stroke="#0F172A" stroke-width="3">90°+α</text>
+
+  <!-- 圆心 -->
+  <circle cx="360" cy="390" r="4" fill="#94A3B8"/>
+  <text x="371" y="386" fill="#94A3B8" font-size="12.5"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">c = p/τ</text>
+  <text x="258" y="404" fill="#94A3B8" font-size="11.5" paint-order="stroke" stroke="#0F172A" stroke-width="3">r = R/τ</text>
+
+  <!-- 三个算例：v₁（圆弧分支）、v₂（腿）、v₃（腿） -->
+  <line x1="360" y1="390" x2="360" y2="510" stroke="#22D3EE" stroke-width="2"/>
+  <circle cx="360" cy="510" r="4.5" fill="#F1F5F9"/>
+  <text x="370" y="516" fill="#F1F5F9" font-size="12.5" paint-order="stroke" stroke="#0F172A" stroke-width="3.5"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">v₁ = (0, 0.4)</text>
+  <circle cx="360" cy="490" r="4.5" fill="#EF4444"/>
+
+  <line x1="360" y1="390" x2="760" y2="470" stroke="#22D3EE" stroke-width="2"/>
+  <circle cx="760" cy="470" r="4.5" fill="#F1F5F9"/>
+  <text x="700" y="492" fill="#F1F5F9" font-size="12.5" paint-order="stroke" stroke="#0F172A" stroke-width="3.5"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">v₂ = (2, 0.6)</text>
+  <circle cx="458.1" cy="409.6" r="4.5" fill="none" stroke="#94A3B8" stroke-width="1.8"/>
+
+  <line x1="360" y1="390" x2="360" y2="270" stroke="#22D3EE" stroke-width="2"/>
+  <circle cx="360" cy="270" r="4.5" fill="#F1F5F9"/>
+  <text x="370" y="266" fill="#F1F5F9" font-size="12.5" paint-order="stroke" stroke="#0F172A" stroke-width="3.5"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">v₃ = (0, 1.6)</text>
+  <circle cx="360" cy="290" r="4.5" fill="none" stroke="#94A3B8" stroke-width="1.8"/>
+
+  <!-- 原点 / 锥顶 -->
+  <circle cx="360" cy="590" r="5" fill="#F1F5F9"/>
+  <text x="370" y="608" fill="#94A3B8" font-size="12">原点 = 锥顶（相对速度 v = 0）</text>
+
+  <!-- 名称 -->
+  <text x="24" y="34" fill="#F1F5F9" font-size="15" font-weight="600">(w·p)² &gt; R²|w|² 到底在比什么</text>
+  <text x="24" y="58" fill="#94A3B8" font-size="12.5"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">p = (0, 2)　R = 1　τ = 2　⇒　c = p/τ = (0, 1)、r = R/τ = 0.5、锥半角 α = asin(R/|p|) = 30°</text>
+
+  <text x="150" y="500" fill="#EF4444" font-size="12.5" paint-order="stroke" stroke="#0F172A" stroke-width="3.5">近弧 = VO 的边界</text>
+  <line x1="248" y1="496" x2="300" y2="480" stroke="#EF4444" stroke-width="0.9"/>
+  <text x="60" y="292" fill="#94A3B8" font-size="12" paint-order="stroke" stroke="#0F172A" stroke-width="3.5">远弧：在 VO 内部，不是边界</text>
+  <line x1="216" y1="298" x2="278" y2="330" stroke="#64748B" stroke-width="0.9"/>
+  <text x="246" y="472" fill="#FCA5A5" font-size="11.5" paint-order="stroke" stroke="#0F172A" stroke-width="3.5">脚点落在这一侧 ⇒ 圆弧分支</text>
+
+  <!-- 把不等式化成角度 -->
+  <rect x="512" y="520" width="432" height="150" rx="10" fill="#0B1220" stroke="#334155" stroke-width="1.2"/>
+  <text x="530" y="546" fill="#F1F5F9" font-size="13"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">(w·p)² &gt; R²|w|²</text>
+  <text x="530" y="570" fill="#CBD5E1" font-size="13"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">⟺ |w·p| / |w| &gt; R</text>
+  <text x="530" y="594" fill="#CBD5E1" font-size="13"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">⟺ |p|·|cos∠(w,p)| &gt; R</text>
+  <text x="530" y="618" fill="#CBD5E1" font-size="13"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">⟺ |cos∠(w,p)| &gt; R/|p| = sin α</text>
+  <text x="530" y="642" fill="#22D3EE" font-size="13"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">加上 w·p &lt; 0 ⟺ ∠(w,p) &gt; 90°+α</text>
+  <text x="530" y="662" fill="#94A3B8" font-size="11.5">⟺ 脚点越过切点半径，落在近弧上</text>
+
+  <!-- 图注 -->
+  <text x="24" y="700" fill="#94A3B8" font-size="12">① 青色细线 = w（圆心 → 当前速度）；实心点 = 脚点落在近弧（红），空心点 = 脚点落在远弧（灰）。脚点 = 从圆心朝 v 看过去、射线打在圆周上的位置。</text>
+  <text x="24" y="722" fill="#94A3B8" font-size="12">② v₁：w·p = −1.2 ✓、(w·p)² = 1.44 &gt; R²|w|² = 0.36 ✓，方向 180° &gt; 120° ⇒ 脚点在近弧 ⇒ 用圆弧分支（最近点就是脚点，距离 0.1）。</text>
+  <text x="24" y="744" fill="#94A3B8" font-size="12">③ v₂：w·p = −0.8 ✓，但 (w·p)² = 0.64 &lt; R²|w|² = 4.16 ✗ —— 方向才 101°，没越过 120° ⇒ 脚点落在远弧 ⇒ 用腿分支（腿上 1.43 比近弧 1.57 更近）。</text>
+  <text x="24" y="766" fill="#94A3B8" font-size="12">④ v₃：w·p = +1.2 &gt; 0，第一项就不满足（在圆心另一侧）⇒ 也是腿分支（脚点落在远弧顶，距离 0.8）。</text>
+</svg>

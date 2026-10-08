@@ -1,65 +1,127 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 450" width="780" height="450"
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 820" width="880" height="820"
      font-family="'DM Sans', -apple-system, system-ui, sans-serif">
-  <rect width="780" height="450" fill="#0F172A"/>
+  <!--
+    算例（与正文 §4.3 同一组数）：p = p_B - p_A = (0,2)、R = rA + rB = 1、τ = 2
+      v_A = (-0.5, 2)、v_B = (-0.5, 0) ⇒ 相对速度 v = (0,2)：正对着开，1 秒后中心重合 ⇒ 现在就在 VO 里
+      w = v - p/τ = (0,1)、det(p,w) = 0（左右对称，代码取右腿）：腿分支
+      ⇒ D = (-0.5, -0.8660254)（单位切向）、u = (0.8660254, -0.5)、|u| = 1
+      ⇒ N = v_A + u = (0.3660254, 1.5)（VO 边界最近点，落在右腿上）
+      ⇒ M = v_A + u/2 = (-0.0669873, 1.75)（ORCA 边界锚点 = u 的中点）
+      ⇒ det(D,u) = +|u| = +1 ⇒ v_A 在禁止侧，违反量 |u|/2 = 0.5（这一帧必须改速度）
+    作图比例：1 速度单位 = 155 px，原点 O = (390, 520)（速度空间，y 向上为正）
+      ⇒ v_B/锥顶=(312.5,520) v_A=(312.5,210) 圆心=(-0.5,1)→(312.5,365) r=77.5
+        切点=(379.62,403.75)/(245.38,403.75) 近弧最低点=(312.5,442.5)
+        N=(446.73,287.5) M=(379.62,248.75)
+        腿方向（像素）= (±0.5,-0.8660254)：锥顶→(558.45,94) / (66.55,94)
+        ORCA 线过 M：(107.54,720) → (468.96,94)，与 u 垂直，且与右腿平行（间距 = |u|/2 = 77.5 px）
+  -->
+  <defs>
+    <clipPath id="orcaAllowed">
+      <path d="M468.96 94 L880 94 L880 720 L107.54 720 Z"/>
+    </clipPath>
+    <!-- 「允许侧 ∩ VO」那一条：宽 |u|/2，就是对方替你让掉的一半 -->
+    <pattern id="overlapHatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="8" height="8" fill="#7C3AED" fill-opacity="0.30"/>
+      <line x1="0" y1="0" x2="0" y2="8" stroke="#A78BFA" stroke-width="1.6" stroke-opacity="0.75"/>
+    </pattern>
+  </defs>
+  <rect width="880" height="820" fill="#0F172A"/>
 
-  <!-- 允许侧（含 v_A 的那一侧） -->
-  <path d="M315.1 0 L574.8 450 L780 450 L780 0 Z" fill="#3B82F6" fill-opacity="0.16" stroke="none"/>
+  <!-- 坐标轴（A 自己的速度空间） -->
+  <g stroke="#334155" stroke-width="1.2">
+    <line x1="60" y1="520" x2="828" y2="520"/>
+    <line x1="390" y1="700" x2="390" y2="108"/>
+    <line x1="157.5" y1="516" x2="157.5" y2="524"/><line x1="235" y1="516" x2="235" y2="524"/>
+    <line x1="312.5" y1="516" x2="312.5" y2="524"/><line x1="467.5" y1="516" x2="467.5" y2="524"/>
+    <line x1="545" y1="516" x2="545" y2="524"/><line x1="622.5" y1="516" x2="622.5" y2="524"/>
+    <line x1="386" y1="442.5" x2="394" y2="442.5"/><line x1="386" y1="365" x2="394" y2="365"/>
+    <line x1="386" y1="287.5" x2="394" y2="287.5"/><line x1="386" y1="210" x2="394" y2="210"/>
+  </g>
 
-  <!-- VO = 圆锥（顶点 v_B）+ 朝向顶点的截断圆弧 -->
-  <path d="M306.6 205 A100 100 0 0 1 133.4 205 L15 0 L425 0 Z"
-        fill="#EF4444" fill-opacity="0.20" stroke="none"/>
-  <circle cx="220" cy="155" r="100" fill="none" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="7 5"/>
-  <line x1="220" y1="355" x2="425" y2="0" stroke="#F59E0B" stroke-width="2.2"/>
-  <line x1="220" y1="355" x2="15" y2="0" stroke="#F59E0B" stroke-width="2.2"/>
-  <path d="M306.6 205 A100 100 0 0 1 133.4 205" fill="none" stroke="#EF4444" stroke-width="3"/>
+  <!-- 允许侧（含 N，不含 v_A） -->
+  <path d="M468.96 94 L880 94 L880 720 L107.54 720 Z" fill="#3B82F6" fill-opacity="0.13"/>
 
-  <!-- 速度空间：原点与两个速度 -->
-  <circle cx="420" cy="355" r="4.5" fill="#F1F5F9"/>
-  <text x="408" y="382" fill="#94A3B8" font-size="13">0</text>
-  <line x1="420" y1="355" x2="620" y2="355" stroke="#94A3B8" stroke-width="2.2"/>
-  <polygon points="620,355 605,349 605,361" fill="#94A3B8"/>
-  <text x="632" y="360" fill="#F1F5F9" font-size="14"
-        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">v_A</text>
-  <line x1="420" y1="355" x2="220" y2="355" stroke="#94A3B8" stroke-width="2.2"/>
-  <polygon points="220,355 235,349 235,361" fill="#94A3B8"/>
-  <text x="168" y="360" fill="#F1F5F9" font-size="14"
-        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">v_B</text>
+  <!-- VO = 圆锥（锥顶 = v_B）+ 面向锥顶的截断圆弧；v_A 落在里面 ⇒ 不处理会撞 -->
+  <path d="M379.62 403.75 A77.5 77.5 0 0 1 245.38 403.75 L66.55 94 L558.45 94 Z"
+        fill="#EF4444" fill-opacity="0.20"/>
+  <!-- 允许侧切进 VO 的那一条（宽 = |u|/2）：各让一半的产物 -->
+  <g clip-path="url(#orcaAllowed)">
+    <path d="M379.62 403.75 A77.5 77.5 0 0 1 245.38 403.75 L66.55 94 L558.45 94 Z" fill="url(#overlapHatch)"/>
+  </g>
+  <circle cx="312.5" cy="365" r="77.5" fill="none" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="7 5"/>
+  <circle cx="312.5" cy="365" r="3.5" fill="#94A3B8"/>
+  <line x1="312.5" y1="365" x2="312.5" y2="442.5" stroke="#94A3B8" stroke-width="1" stroke-dasharray="3 3"/>
+  <text x="320" y="412" fill="#94A3B8" font-size="12"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">R/τ</text>
 
-  <!-- u：v_A 到 VO 边界最近点 -->
-  <line x1="620" y1="355" x2="320" y2="181.8" stroke="#EC4899" stroke-width="2.6"/>
-  <polygon points="320,181.8 336,184 331,194" fill="#EC4899"/>
-  <text x="600" y="300" fill="#EC4899" font-size="15"
-        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">u</text>
+  <!-- VO 内边界：截断圆的近弧 -->
+  <path d="M379.62 403.75 A77.5 77.5 0 0 1 245.38 403.75" fill="none" stroke="#EF4444" stroke-width="3"/>
+  <!-- 两条腿 = “只我负责”时必须挪到的边界 -->
+  <line x1="312.5" y1="520" x2="558.45" y2="94" stroke="#F59E0B" stroke-width="2.2"/>
+  <line x1="312.5" y1="520" x2="66.55" y2="94" stroke="#F59E0B" stroke-width="2.2"/>
 
-  <!-- 中点 = v_A + u/2 -->
-  <circle cx="470" cy="268.4" r="5" fill="#22D3EE"/>
-  <text x="352" y="252" fill="#22D3EE" font-size="13"
+  <!-- ORCA 边界：过 u 的中点、方向 ⟂ u（与右腿平行，间距 |u|/2） -->
+  <line x1="468.96" y1="94" x2="107.54" y2="720" stroke="#22D3EE" stroke-width="2.6"/>
+
+  <!-- u：从当前速度 v_A 指向 VO 边界最近点 N -->
+  <line x1="312.5" y1="210" x2="446.73" y2="287.5" stroke="#EC4899" stroke-width="2.6"/>
+  <polygon points="446.73,287.5 437.35,275.74 431.85,285.26" fill="#EC4899"/>
+
+  <!-- 速度、原点 -->
+  <circle cx="390" cy="520" r="4.5" fill="#F1F5F9"/>
+  <text x="380" y="544" fill="#94A3B8" font-size="12">0</text>
+  <circle cx="312.5" cy="520" r="4.5" fill="#F1F5F9"/>
+  <text x="176" y="546" fill="#F1F5F9" font-size="13"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">v_B = (−0.5, 0)</text>
+  <text x="176" y="564" fill="#94A3B8" font-size="11.5">← 锥顶在这里（不是原点）</text>
+  <circle cx="312.5" cy="210" r="4.5" fill="#F1F5F9"/>
+  <text x="325" y="204" fill="#F1F5F9" font-size="13"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">v_A = (−0.5, 2)</text>
+
+  <!-- 关键点与标签 -->
+  <circle cx="446.73" cy="287.5" r="4" fill="#F1F5F9"/>
+  <text x="458" y="282" fill="#F1F5F9" font-size="12.5" paint-order="stroke" stroke="#0F172A" stroke-width="3.5"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">N = v_A + u</text>
+  <text x="458" y="300" fill="#94A3B8" font-size="11.5" paint-order="stroke" stroke="#0F172A" stroke-width="3.5">VO 边界上离 v_A 最近的点</text>
+  <text x="458" y="318" fill="#64748B" font-size="11" paint-order="stroke" stroke="#0F172A" stroke-width="3.5">（正对着开 ⇒ 代码取右腿）</text>
+
+  <circle cx="379.62" cy="248.75" r="5" fill="#22D3EE"/>
+  <text x="392" y="242" fill="#22D3EE" font-size="12.5" paint-order="stroke" stroke="#0F172A" stroke-width="3.5"
         font-family="ui-monospace, SFMono-Regular, Menlo, monospace">v_A + u/2</text>
+  <text x="392" y="260" fill="#94A3B8" font-size="11.5" paint-order="stroke" stroke="#0F172A" stroke-width="3.5">（u 的中点）</text>
 
-  <!-- ORCA 边界：过中点、方向 ⟂ u -->
-  <line x1="315.1" y1="0" x2="574.8" y2="450" stroke="#22D3EE" stroke-width="2.6"/>
+  <!-- u 的两半：我让一半，对方镜像让一半 -->
+  <text x="326" y="238" fill="#EC4899" font-size="15" font-weight="600" paint-order="stroke" stroke="#0F172A" stroke-width="3.5">u</text>
+  <text x="296" y="276" fill="#EC4899" font-size="12.5" paint-order="stroke" stroke="#0F172A" stroke-width="3.5"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">我挪 u/2</text>
+  <line x1="466" y1="338" x2="420" y2="275" stroke="#EC4899" stroke-width="1" stroke-dasharray="3 3"/>
+  <text x="470" y="348" fill="#EC4899" font-size="12.5" paint-order="stroke" stroke="#0F172A" stroke-width="3.5"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">B 反向挪 u/2</text>
 
-  <!-- 标注 -->
-  <text x="24" y="30" fill="#F1F5F9" font-size="15" font-weight="600">ORCA 半平面</text>
-  <text x="158" y="30" fill="#94A3B8" font-size="14">：边界过</text>
-  <text x="228" y="30" fill="#94A3B8" font-size="14"
-        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">v_A + u/2</text>
-  <text x="330" y="30" fill="#94A3B8" font-size="14">，方向 ⟂ u</text>
+  <!-- 斜纹那一条 = 允许侧 ∩ VO -->
+  <text x="447" y="132" fill="#C4B5FD" font-size="11.5" paint-order="stroke" stroke="#0F172A" stroke-width="3.5">允许侧 ∩ VO</text>
+  <text x="447" y="150" fill="#C4B5FD" font-size="11.5" paint-order="stroke" stroke="#0F172A" stroke-width="3.5">= B 让的一半</text>
 
-  <text x="596" y="70" fill="#3B82F6" font-size="14">允许侧</text>
-  <text x="596" y="90" fill="#94A3B8" font-size="12">（含</text>
-  <text x="626" y="90" fill="#94A3B8" font-size="12"
-        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">v_A</text>
-  <text x="662" y="90" fill="#94A3B8" font-size="12">）</text>
+  <!-- 截断圆说明（画在外面，避免压住青线） -->
+  <text x="30" y="372" fill="#CBD5E1" font-size="11.5">截断圆：τ 秒后正好相切</text>
+  <text x="30" y="390" fill="#94A3B8" font-size="11.5"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">圆心 v_B + p/τ、半径 R/τ</text>
+  <line x1="200" y1="381" x2="262" y2="400" stroke="#94A3B8" stroke-width="0.9"/>
 
-  <text x="96" y="150" fill="#EF4444" font-size="14">VO 边界</text>
-  <text x="96" y="170" fill="#EF4444" font-size="12">（v 落在这里 = τ 内撞）</text>
+  <!-- 各元素的名字 -->
+  <text x="24" y="34" fill="#F1F5F9" font-size="15" font-weight="600">ORCA 半平面：在 A 自己的速度空间里推出来</text>
+  <text x="24" y="58" fill="#94A3B8" font-size="12.5"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">p = (0, 2)　R = 1　τ = 2　v_A = (−0.5, 2)　v_B = (−0.5, 0)　⇒ 1 秒后中心重合</text>
 
-  <text x="404" y="108" fill="#94A3B8" font-size="12">截断圆：圆心</text>
-  <text x="484" y="108" fill="#94A3B8" font-size="12"
-        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">v_B + p/τ</text>
-  <text x="570" y="108" fill="#94A3B8" font-size="12">，半径 R/τ</text>
+  <text x="110" y="148" fill="#EF4444" font-size="12.5" paint-order="stroke" stroke="#0F172A" stroke-width="3.5">VO（红）= τ 内会撞的 v_A 集合</text>
+  <text x="110" y="168" fill="#94A3B8" font-size="11.5" paint-order="stroke" stroke="#0F172A" stroke-width="3.5">当前 v_A 就在红区里 ⇒ 不处理一定会撞</text>
+  <text x="185" y="644" fill="#22D3EE" font-size="13">ORCA 边界：过 u 的中点，方向 ⟂ u</text>
+  <text x="566" y="112" fill="#F59E0B" font-size="12.5">腿：只我负责时的边界</text>
+  <text x="640" y="480" fill="#3B82F6" font-size="13">允许侧：新速度必须落在这里</text>
 
-  <text x="24" y="418" fill="#94A3B8" font-size="12">本图是文章算例的真实坐标：v_A=(1,0)、B 在 (0,2) 速度 (−1,0)、半径各 0.5、τ=2</text>
-  <text x="24" y="438" fill="#94A3B8" font-size="12">⇒ u=(−1.5, 0.866)、Direction=(−0.5, −0.866)、Point = v_A + u/2 = (0.25, 0.433)</text>
+  <!-- 图注 -->
+  <text x="24" y="738" fill="#94A3B8" font-size="12">① 这是 A 自己的速度空间：把相对速度空间里的 VO 整体平移 v_B，锥顶就从原点挪到了 v_B（所以锥顶不是原点）。</text>
+  <text x="24" y="760" fill="#94A3B8" font-size="12">② 不处理会撞：v_A 已经在红区里（1 秒后中心重合）。粉箭 u = 从 v_A 到 VO 边界最近点 N 的最小改动。</text>
+  <text x="24" y="782" fill="#94A3B8" font-size="12">③ 各让一半：青线过 u 的中点（v_A + u/2）且 ⟂ u。det(D, u) = +1 &gt; 0 ⇒ v_A 在禁止侧，违反量恰好 |u|/2 = 0.5。</text>
+  <text x="24" y="804" fill="#94A3B8" font-size="12">④ 斜纹那条（宽 |u|/2）是允许侧切进 VO 的部分：我挪 u/2、B 反向镜像挪 u/2，相加正好是 u ⇒ 相对速度落到 VO 边界。</text>
 </svg>

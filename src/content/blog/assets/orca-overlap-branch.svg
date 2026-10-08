@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 650" width="940" height="650"
+     font-family="'DM Sans', -apple-system, system-ui, sans-serif">
+  <!--
+    分支一（已经重叠）：rA = rB = 0.5 ⇒ R = 1、p = (0, 0.6) ⇒ |p| = 0.6 < R，两个圆已经穿了
+      约束：一步（dt）之内必须分开，即 |p - dt·v| ≥ R ⟺ v 落在圆外（圆心 p/dt、半径 R/dt）
+      图里取 dt = 0.5 便于画：p/dt = (0,1.2)、R/dt = 2
+      v_B = (-1,0)、v_A = (-0.7,0.8) ⇒ 相对速度 rel = (0.3,0.8)
+        w = rel - p/dt = (0.3,-0.4)、|w| = 0.5（同时 = v_A - 圆心 ✓）
+        ŵ = (0.6,-0.8)、u = (R/dt - |w|)·ŵ = (0.9,-1.2)、|u| = 1.5
+        N = v_A + u = (0.2,-0.4)（在圆上，|N - 圆心| = 2 ✓）
+        M = v_A + u/2 = (-0.25, 0.2)；D = (ŵ.y, -ŵ.x) = (-0.8,-0.6)、det(D,u) = +|u| ⇒ 违反量 |u|/2 = 0.75
+      像素：1 单位 = 90 px，速度空间原点 = (600, 400)
+  -->
+  <rect width="940" height="650" fill="#0F172A"/>
+
+  <!-- 位置空间小窗：两个圆已经相交 -->
+  <rect x="24" y="86" width="182" height="180" rx="10" fill="#0B1220" stroke="#334155" stroke-width="1.2"/>
+  <text x="34" y="106" fill="#F1F5F9" font-size="12" font-weight="600">位置空间：已经穿了</text>
+  <circle cx="115" cy="212" r="42" fill="#3B82F6" fill-opacity="0.16" stroke="#3B82F6" stroke-width="1.4"/>
+  <circle cx="115" cy="158" r="42" fill="#EF4444" fill-opacity="0.16" stroke="#EF4444" stroke-width="1.4"/>
+  <line x1="115" y1="212" x2="115" y2="158" stroke="#94A3B8" stroke-width="1.2"/>
+  <circle cx="115" cy="212" r="3" fill="#F1F5F9"/>
+  <circle cx="115" cy="158" r="3" fill="#F1F5F9"/>
+  <text x="101" y="228" fill="#F1F5F9" font-size="12">A</text>
+  <text x="101" y="148" fill="#F1F5F9" font-size="12">B</text>
+  <text x="124" y="190" fill="#94A3B8" font-size="10.5"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">|p| = 0.6</text>
+  <text x="24" y="284" fill="#94A3B8" font-size="11.5">R = rA + rB = 1 &gt; |p| ⇒ 圆心距小于半径和</text>
+
+  <!-- 速度空间 -->
+  <g stroke="#334155" stroke-width="1.2">
+    <line x1="250" y1="400" x2="920" y2="400"/>
+    <line x1="600" y1="560" x2="600" y2="120"/>
+  </g>
+
+  <!-- 允许侧（含 N、不含 v_A） -->
+  <path d="M393.5 520 L900.2 140 L920 140 L920 520 Z" fill="#3B82F6" fill-opacity="0.12"/>
+
+  <!-- 一步分开圆 -->
+  <circle cx="510" cy="292" r="180" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-dasharray="7 5"/>
+  <line x1="510" y1="292" x2="690" y2="292" stroke="#94A3B8" stroke-width="1" stroke-dasharray="3 3"/>
+  <text x="566" y="286" fill="#94A3B8" font-size="11.5"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">R/dt = 2</text>
+
+  <!-- ORCA 边界 -->
+  <line x1="393.5" y1="520" x2="900.2" y2="140" stroke="#22D3EE" stroke-width="2.4"/>
+
+  <!-- w（圆心 → v_A）与 u（v_A → 圆上）连成一条半径 -->
+  <line x1="510" y1="292" x2="537" y2="328" stroke="#22D3EE" stroke-width="2"/>
+  <polygon points="537,328 529.8,310.9 522.6,316.3" fill="#22D3EE"/>
+  <line x1="537" y1="328" x2="618" y2="436" stroke="#EC4899" stroke-width="2.6"/>
+  <polygon points="618,436 611,417.5 602.2,424.1" fill="#EC4899"/>
+
+  <!-- 点 -->
+  <circle cx="510" cy="292" r="3.5" fill="#94A3B8"/>
+  <text x="368" y="286" fill="#94A3B8" font-size="11.5"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">圆心 = v_B + p/dt</text>
+  <circle cx="510" cy="400" r="4.5" fill="#F1F5F9"/>
+  <text x="398" y="406" fill="#F1F5F9" font-size="12.5"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">v_B = (−1, 0)</text>
+  <circle cx="537" cy="328" r="4.5" fill="#F1F5F9"/>
+  <text x="548" y="322" fill="#F1F5F9" font-size="12.5"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">v_A = (−0.7, 0.8)</text>
+  <circle cx="618" cy="436" r="4.5" fill="#F1F5F9"/>
+  <circle cx="577.5" cy="382" r="5" fill="#22D3EE"/>
+
+  <!-- 文字 -->
+  <text x="520" y="308" fill="#22D3EE" font-size="12.5" paint-order="stroke" stroke="#0F172A" stroke-width="3.5"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">w</text>
+  <text x="470" y="350" fill="#EC4899" font-size="12.5" paint-order="stroke" stroke="#0F172A" stroke-width="3.5"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">我挪 u/2</text>
+  <text x="630" y="404" fill="#EC4899" font-size="12.5" paint-order="stroke" stroke="#0F172A" stroke-width="3.5"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">B 反向挪 u/2</text>
+  <text x="592" y="376" fill="#22D3EE" font-size="12.5" paint-order="stroke" stroke="#0F172A" stroke-width="3.5"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">v_A + u/2</text>
+  <text x="628" y="440" fill="#F1F5F9" font-size="11.5" paint-order="stroke" stroke="#0F172A" stroke-width="3.5">N（在圆上）</text>
+  <text x="430" y="508" fill="#22D3EE" font-size="12.5">ORCA 边界：过 v_A + u/2，方向 ⟂ u</text>
+  <text x="800" y="220" fill="#3B82F6" font-size="13">允许侧</text>
+  <text x="800" y="240" fill="#94A3B8" font-size="11.5">（一步后 ≥ R）</text>
+  <text x="470" y="482" fill="#94A3B8" font-size="11.5">若 w = 0（v = p/dt）：取 ŵ = normalize(−p)，沿圆心连线把两者推开</text>
+
+  <!-- 标题与图注 -->
+  <text x="24" y="34" fill="#F1F5F9" font-size="15" font-weight="600">已重叠分支：τ 不再管用，改成「一步之内分开」</text>
+  <text x="24" y="58" fill="#94A3B8" font-size="12.5"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">rA = rB = 0.5（R = 1）、p = (0, 0.6) ⇒ |p| &lt; R；图中取 dt = 0.5 便于画，真实帧长取 1/60 左右</text>
+
+  <text x="24" y="578" fill="#94A3B8" font-size="12">① 位置已经重叠 ⇒「往哪边躲」没有意义，唯一目标是 一步（dt）之内分开：要求 |p − dt·v| ≥ R。</text>
+  <text x="24" y="600" fill="#94A3B8" font-size="12">② 该要求 ⟺ 相对速度落在圆外：圆心 p/dt、半径 R/dt（A 空间里圆心 = v_B + p/dt）。图里 |u| = 1.5，v_A 在禁止侧，违反量 |u|/2 = 0.75。</text>
+  <text x="24" y="622" fill="#94A3B8" font-size="12">③ u = (R/dt − |w|)·ŵ 是沿半径推到圆上的最小改动；锚点仍是 v_A + u/2（各让一半）。与其它分支唯一的区别：1/τ 换成了 1/dt。</text>
+</svg>
