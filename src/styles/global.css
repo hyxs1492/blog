@@ -43,6 +43,7 @@ html {
   background: var(--color-bg-dark);
   color: var(--color-text);
   overflow-x: hidden;
+  overflow-x: clip; /* clip 不创建滚动容器，避免破坏 position: sticky */
   scroll-behavior: smooth;
 }
 
@@ -55,6 +56,7 @@ body {
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* Animated background gradient */

@@ -129,7 +129,8 @@ const relativePath = currentPath.replace(base.slice(0, -1), '') || '/';
     border: none;
     color: var(--color-text);
     cursor: pointer;
-    padding: 0.5rem;
+    padding: 0.625rem; /* 点击区域 ≥ 44px */
+    margin: -0.25rem;
   }
 
   .mobile-menu-btn .icon {

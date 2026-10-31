@@ -24,7 +24,7 @@ tags: ['Unity', 'URP', 'Shader', 'Fresnel', '光照方程', 'Entities Graphics']
 | **（四）本文** | **菲涅尔与 N·V、幂函数整形、归一化、发射项在光照方程中的位置、加性通道、关键字与逐实例数据** |
 | （五）[自发光](/blog/blog/customlit-emission/) | 关键字短路、HDR 与 Bloom、颜色乘法语义、逐实例数据分层 |
 
-![边缘光效果示意：亮区只出现在轮廓内侧，正对相机的中心最暗](./assets/customlit_final.png)
+![边缘光效果示意：亮区只出现在轮廓内侧，正对相机的中心最暗](../assets/customlit_final.png)
 
 ---
 

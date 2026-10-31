@@ -78,6 +78,13 @@ import { PRESETS } from '../scripts/background/catalog';
     flex-direction: column;
     align-items: flex-end;
     gap: 0.6rem;
+    /* 容器本身不接收点击，否则隐藏的面板会挡住页面内容 */
+    pointer-events: none;
+  }
+
+  .bg-toggle,
+  .bg-panel {
+    pointer-events: auto;
   }
 
   .bg-panel {

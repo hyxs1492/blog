@@ -820,10 +820,10 @@ output.positionCS = float4(2.0, 2.0, 2.0, 1.0) * positionCS.w;
 
 系列其它篇：[五个 Pass](/blog/blog/customlit-passes/) ｜ [溶解](/blog/blog/customlit-dissolve/) ｜ [外发光 Rim](/blog/blog/customlit-rim-glow/) ｜ [自发光 Emission](/blog/blog/customlit-emission/)
 
-![一组基础形状上的描边](./assets/customlit_final.png)
+![一组基础形状上的描边](../assets/customlit_final.png)
 
-![未做位置平均：硬边处外壳被撕开，轮廓带出现缺口](./assets/sm_D_nosmooth_plus_shell.png)
+![未做位置平均：硬边处外壳被撕开，轮廓带出现缺口](../assets/sm_D_nosmooth_plus_shell.png)
 
-![做了位置平均：外壳连续，轮廓带完整](./assets/sm_B_main_smooth.png)
+![做了位置平均：外壳连续，轮廓带完整](../assets/sm_B_main_smooth.png)
 
 > 结论分三档：**源码/文档事实**（Unity 手册、URP 源码行号、脚本 API 文档）已逐条核对；**推算**（§3.6 的三个百分比、§2.4 与 §3.7 的精度上限）标注了假设；**机制推断**（§4.5 的 late-Z 退化条件、§5.3 的"槽位索引决定同一 renderer 内 Pass 顺序"、§4.6 的天空盒覆盖归因）给出的是推理链而非实跑 —— 其中 §5.3 建议用 Frame Debugger 复核，§4.6 给出了一条可自行证伪的判据。内置 Skybox shader 编在编辑器/播放器资源里（无包源码），因此对它的描述停留在机制层。

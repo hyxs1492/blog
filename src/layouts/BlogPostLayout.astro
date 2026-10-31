@@ -1,6 +1,7 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import Navigation from '../components/Navigation.astro';
+import type { MarkdownHeading } from 'astro';
 
 interface Props {
   title: string;
@@ -9,10 +10,17 @@ interface Props {
   category?: string | undefined;
   updatedDate?: Date | undefined;
   tags?: string[] | undefined;
+  headings?: MarkdownHeading[] | undefined;
 }
 
 const base = import.meta.env.BASE_URL;
-const { title, description, pubDate, category, updatedDate, tags } = Astro.props;
+const { title, description, pubDate, category, updatedDate, tags, headings } = Astro.props;
+// 只收录「最外层」章节：取文章里出现的最小标题层级（有的文章用 #，多数用 ##）
+const bodyHeadings = headings ?? [];
+const topDepth = bodyHeadings.length > 0
+  ? Math.min(...bodyHeadings.map((h) => h.depth))
+  : 2;
+const tocHeadings = bodyHeadings.filter((h) => h.depth === topDepth);
 
 const formattedPubDate = pubDate.toLocaleDateString('zh-CN', {
   year: 'numeric',
@@ -59,11 +67,76 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('zh-CN', {
         )}
       </header>
 
-      <div class="post-content">
-        <slot />
+      <div class="post-body">
+        {tocHeadings.length > 1 && (
+          <details class="toc-mobile">
+            <summary>目录（{tocHeadings.length} 章）</summary>
+            <ul>
+              {tocHeadings.map((h) => (
+                <li>
+                  <a href={`#${h.slug}`}>{h.text}</a>
+                </li>
+              ))}
+            </ul>
+          </details>
+        )}
+
+        <div class="post-content">
+          <slot />
+        </div>
+
+        {tocHeadings.length > 1 && (
+          <>
+            <nav class="toc" aria-label="文章目录">
+              <p class="toc-title">目录</p>
+              <ul>
+                {tocHeadings.map((h) => (
+                  <li>
+                    <a href={`#${h.slug}`}>{h.text}</a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </>
+        )}
       </div>
     </div>
   </article>
+  <script>
+    const toc = document.querySelector('.toc');
+    const tocMobile = document.querySelector('.toc-mobile');
+    if (tocMobile) {
+      tocMobile.querySelectorAll('a').forEach((a) => {
+        a.addEventListener('click', () => tocMobile.removeAttribute('open'));
+      });
+    }
+    if (toc) {
+      const links = Array.from(toc.querySelectorAll('a'));
+      const map = new Map();
+      links.forEach((a) => {
+        const href = a.getAttribute('href') || '';
+        const id = decodeURIComponent(href.replace(/^#/, ''));
+        const el = document.getElementById(id);
+        if (el) map.set(el, a);
+      });
+
+      if (map.size > 0) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              const active = map.get(entry.target);
+              if (!active) return;
+              links.forEach((l) => l.classList.remove('active'));
+              active.classList.add('active');
+            });
+          },
+          { rootMargin: '-100px 0px -70% 0px', threshold: 0 }
+        );
+        map.forEach((_, el) => observer.observe(el));
+      }
+    }
+  </script>
 </BaseLayout>
 
 <style>
@@ -166,6 +239,186 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('zh-CN', {
     margin-top: 2rem;
     margin-bottom: 1rem;
     font-weight: 700;
+  }
+
+  .post-content :global(h2),
+  .post-content :global(h3) {
+    scroll-margin-top: 110px;
+  }
+
+  .post-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 240px;
+    grid-template-areas: "content toc";
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  .post-content {
+    grid-area: content;
+    min-width: 0;
+  }
+
+  .toc {
+    grid-area: toc;
+    position: sticky;
+    top: 100px;
+    max-height: calc(100vh - 130px);
+    overflow-y: auto;
+    padding: 1rem 1.1rem;
+    background: var(--color-bg-card);
+    border: 1px solid rgba(168, 85, 247, 0.2);
+    border-radius: 0.75rem;
+    font-size: 0.8rem;
+    line-height: 1.45;
+    animation: fadeInUp 1s ease-out 0.3s backwards;
+  }
+
+  .toc-title {
+    margin: 0 0 0.6rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--color-text-dim);
+    text-transform: uppercase;
+  }
+
+  .toc ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .toc li {
+    margin: 0.2rem 0;
+  }
+
+  .toc a {
+    display: block;
+    word-break: break-word;
+    padding: 0.2rem 0 0.2rem 0.6rem;
+    border-left: 2px solid transparent;
+    color: var(--color-text-dim);
+    text-decoration: none;
+    line-height: 1.4;
+    transition: all 0.2s ease;
+  }
+
+  .toc a:hover,
+  .toc a.active {
+    color: var(--color-accent-purple);
+    border-left-color: var(--color-accent-purple);
+  }
+
+  .toc-mobile {
+    display: none;
+  }
+
+  @media (max-width: 1100px) {
+    .post-body {
+      display: block; /* 单列：让目录条的 sticky 以整个内容区为参照 */
+    }
+
+    /* 手机上侧边目录隐藏，改用顶部可折叠的“目录”条 */
+    .toc {
+      display: none;
+    }
+
+    .toc-mobile {
+      display: block;
+      grid-area: toc;
+      position: sticky;
+      top: calc(var(--nav-height) + 0.5rem);
+      z-index: 40;
+      background: var(--color-bg-card);
+      border: 1px solid rgba(168, 85, 247, 0.25);
+      border-radius: 0.75rem;
+      font-size: 0.85rem;
+      max-height: 55vh;
+      overflow-y: auto;
+      margin-bottom: 1.25rem;
+    }
+
+    .toc-mobile summary {
+      cursor: pointer;
+      padding: 0.75rem 1rem;
+      color: var(--color-text);
+      font-weight: 600;
+      list-style: none;
+    }
+
+    .toc-mobile summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .toc-mobile summary::after {
+      content: '▾';
+      float: right;
+      color: var(--color-text-dim);
+      transition: transform 0.2s ease;
+    }
+
+    .toc-mobile[open] summary::after {
+      transform: rotate(180deg);
+    }
+
+    .toc-mobile ul {
+      list-style: none;
+      margin: 0;
+      padding: 0 1rem 0.75rem;
+    }
+
+    .toc-mobile a {
+      display: block;
+      padding: 0.3rem 0;
+      color: var(--color-text-dim);
+      text-decoration: none;
+      line-height: 1.4;
+    }
+
+    .toc-mobile a:active,
+    .toc-mobile a:hover {
+      color: var(--color-accent-purple);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .blog-post {
+      padding: 6.5rem 1rem 3rem;
+    }
+
+    .post-content {
+      padding: 1.5rem 1.25rem;
+      border-radius: 0.75rem;
+    }
+
+    .post-content :global(h2) {
+      font-size: 1.5rem;
+    }
+
+    .post-content :global(h3) {
+      font-size: 1.2rem;
+    }
+  }
+
+  /* 防止长代码 / 长单词 / 表格把页面撑宽 */
+  .post-content :global(p),
+  .post-content :global(li),
+  .post-content :global(td),
+  .post-content :global(th) {
+    overflow-wrap: break-word;
+  }
+
+  .post-content :global(code) {
+    overflow-wrap: anywhere;
+  }
+
+  .post-content :global(pre) {
+    max-width: 100%;
+  }
+
+  .post-content :global(table) {
+    max-width: 100%;
   }
 
   .post-content :global(h2) {

@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Navigation from '../../components/Navigation.astro';
 import BlogCard from '../../components/BlogCard.astro';
-import { groupPostsByCategory } from '../../utils/categories';
+import { groupPostsByCategory, postSlug } from '../../utils/categories';
 
 const allBlogPosts = await getCollection('blog');
 // 按分类分组，组内按发布日期倒序（分组逻辑见 src/utils/categories.ts）
@@ -25,7 +25,17 @@ const totalPosts = allBlogPosts.length;
           记录技术学习、开发实践与日常思考
         </p>
         <p class="page-meta">共 {categories.length} 个分类 · {totalPosts} 篇</p>
+
       </header>
+
+      <nav class="category-nav" aria-label="分类导航">
+        {categories.map((category) => (
+          <a class="category-chip" href={`#${category.slug}`}>
+            <span class="category-chip-name">{category.name}</span>
+            <span class="category-chip-count">{category.count}</span>
+          </a>
+        ))}
+      </nav>
 
       <div class="category-sections">
         {categories.map((category) => (
@@ -41,7 +51,7 @@ const totalPosts = allBlogPosts.length;
                   title={post.data.title}
                   description={post.data.description}
                   pubDate={post.data.pubDate}
-                  slug={post.id}
+                  slug={postSlug(post)}
                   tags={post.data.tags}
                 />
               ))}
@@ -92,6 +102,60 @@ const totalPosts = allBlogPosts.length;
   }
 
   /* ---- 分类分组 ---- */
+  .category-nav {
+    position: sticky;
+    top: calc(var(--nav-height) + 0.5rem);
+    margin-bottom: 2rem;
+    z-index: 50;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6rem;
+    margin: 1.5rem auto 0;
+    padding: 0.6rem;
+    max-width: 900px;
+    background: rgba(15, 23, 42, 0.72);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .category-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    color: var(--color-text-dim);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+  }
+
+  .category-chip:hover {
+    color: var(--color-accent-purple);
+    border-color: var(--color-accent-purple);
+    background: rgba(168, 85, 247, 0.1);
+  }
+
+  .category-chip-count {
+    font-size: 0.72rem;
+    padding: 0.05rem 0.4rem;
+    border-radius: 999px;
+    background: rgba(168, 85, 247, 0.15);
+    color: var(--color-accent-purple);
+  }
+
+  @media (max-width: 768px) {
+    .category-nav {
+      position: static;
+      border-radius: 1rem;
+      margin-top: 1.25rem;
+    }
+  }
+
   .category-sections {
     display: flex;
     flex-direction: column;
@@ -99,7 +163,7 @@ const totalPosts = allBlogPosts.length;
   }
 
   .category-section {
-    scroll-margin-top: calc(var(--nav-height) + 1rem);
+    scroll-margin-top: calc(var(--nav-height) + 4.5rem);
   }
 
   .category-head {
@@ -135,7 +199,61 @@ const totalPosts = allBlogPosts.length;
       padding-top: calc(var(--nav-height) + 1rem);
     }
 
-    .category-sections {
+    .category-nav {
+    position: sticky;
+    top: calc(var(--nav-height) + 0.5rem);
+    margin-bottom: 2rem;
+    z-index: 50;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6rem;
+    margin: 1.5rem auto 0;
+    padding: 0.6rem;
+    max-width: 900px;
+    background: rgba(15, 23, 42, 0.72);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .category-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    color: var(--color-text-dim);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+  }
+
+  .category-chip:hover {
+    color: var(--color-accent-purple);
+    border-color: var(--color-accent-purple);
+    background: rgba(168, 85, 247, 0.1);
+  }
+
+  .category-chip-count {
+    font-size: 0.72rem;
+    padding: 0.05rem 0.4rem;
+    border-radius: 999px;
+    background: rgba(168, 85, 247, 0.15);
+    color: var(--color-accent-purple);
+  }
+
+  @media (max-width: 768px) {
+    .category-nav {
+      position: static;
+      border-radius: 1rem;
+      margin-top: 1.25rem;
+    }
+  }
+
+  .category-sections {
       gap: 2.5rem;
     }
 

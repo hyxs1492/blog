@@ -2,6 +2,16 @@ import type { CollectionEntry } from 'astro:content';
 
 export type BlogPost = CollectionEntry<'blog'>;
 
+/**
+ * 文章 slug（用于 URL）。文章可以按分类放在子目录里，
+ * 但 URL 只取文件名，避免改变已有链接：`unity-dots/xxx.md` → `xxx`。
+ */
+export function postSlug(entry: BlogPost): string {
+  const id = entry.id;
+  const i = id.lastIndexOf('/');
+  return i >= 0 ? id.slice(i + 1) : id;
+}
+
 /** 按分类聚合的结果 */
 export interface CategoryGroup {
   /** 由分类名 slug 化得到的片段，用作分组区块的 `id`（可 `#unity-dots` 直接定位） */

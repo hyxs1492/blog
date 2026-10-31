@@ -2,7 +2,7 @@
 title: 'Unity DOTS —— 手写一套 GameObject → ECS 渲染桥'
 description: '从零搭一座运行时渲染桥：逻辑留在 GameObject，只把绘制换成 ECS 批量提交，并把双向变换同步、剔除判据与销毁策略讲清楚'
 pubDate: '2026-09-29'
-category: '算法'
+category: 'Unity DOTS'
 tags: ['Unity', 'DOTS', 'Entities Graphics', '渲染桥', 'GameObject']
 ---
 

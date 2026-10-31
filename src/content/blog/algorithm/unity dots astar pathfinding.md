@@ -1,5 +1,5 @@
 ---
-title: 'Unity 寻路入门：手写 A* 与 Dijkstra（附 DOTS 并行改造）'
+title: '寻路入门：手写 A* 与 Dijkstra（附 DOTS 并行改造）'
 description: '从零实现网格 A*：世界↔格坐标换算、g/h/f 与可采纳启发式、二叉堆 + 世代标记、视线拉直、掩码提取闭合多边形，最后用 IJobParallelFor 在 DOTS 里并行求解'
 pubDate: '2026-09-29'
 category: '算法'

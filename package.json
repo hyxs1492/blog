@@ -24,7 +24,9 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "dev:lan": "astro dev --host",
+    "preview:lan": "astro preview --host"
   },
   "dependencies": {
     "@astrojs/mdx": "^6.0.0",
